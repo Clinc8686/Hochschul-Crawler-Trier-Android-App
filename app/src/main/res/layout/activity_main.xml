@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="16dp"
+    android:background="@drawable/petrisberg_image"
+    tools:context="de.clinc8686.hochschul_crawler.MainActivity">
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:height="70dp"
+        android:gravity="center_vertical"
+        android:text="Hochschule-Trier Noten Crawler"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="23sp"
+        tools:ignore="RtlCompat" />
+    <!--        android:background="@drawable/rounded_corner"-->
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:width="250dp"
+        android:height="50dp"
+        android:background="@drawable/inputfield"
+        android:gravity="center_vertical"
+        android:maxLength="15"
+        android:hint="Hochschulkennung"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        tools:ignore="RtlCompat" />
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:width="250dp"
+        android:gravity="center_vertical"
+        android:maxLength="25"
+        android:background="@drawable/inputfield"
+        android:hint="Passwort"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        tools:ignore="RtlCompat"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:width="250dp"
+        android:background="@drawable/rounded_corner"
+        android:enabled="true"
+        android:text="Login"
+        android:backgroundTint="#FF5722"
+        android:textColor="#FFFFFF" />
+
+    <ProgressBar
+        android:id="@+id/progressBarLogin"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_marginTop="20dp"
+        android:max="100"
+        android:progress="0"
+        android:progressTint="#31FF22"
+        android:layout_width="250dp"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:id="@+id/loggingstatus_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textSize="17sp"
+        android:text="Not Logged In"
+        android:textColor="#FF0000" />
+
+    <TextView
+        android:id="@+id/intervall_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="Wähle hier das Aktualisierungsintervall aus"
+        android:textColor="#FFFFFF" />
+
+    <!--<SeekBar
+        android:id="@+id/seekBar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="250dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:min="5"
+        android:max="60"
+        android:thumbTint="#FF5722"
+        android:background="@drawable/rounded_corner"
+        android:backgroundTint="#fff"
+        android:progressDrawable="@drawable/seekbar_thumb"
+
+        android:progress="30" />-->
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:splitTrack="false"
+        android:layout_width="250dp"
+        android:layout_height="3dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#FFF"
+        android:thumbTint="#FF5722"
+        android:thumb="@drawable/thumb"
+        android:background="@drawable/rounded_corner"
+        android:min="15"
+        android:progress="60"
+        android:max="60"
+        android:scaleY="5.5"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:thumbOffset="8dp"
+        android:progressDrawable="@drawable/seekbar_thumb"
+        />
+
+    <TextView
+        android:id="@+id/text_seekbar_minute"
+        android:text="Alle 60 Minuten wird aktualisiert.\n Geschätzte Datennutzung im Monat: 387 MByte"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/text_qis_abschaltung"
+        android:text="Ausgenommen Nachts. Zwischen 0 und 5 Uhr ist das QIS nicht erreichbar."
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:textColor="#9CFFFFFF" />
+
+</LinearLayout>
