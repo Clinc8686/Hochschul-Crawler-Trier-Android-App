@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         Button btn_login = findViewById(R.id.btn_login);
         boolean service_status = checkService();
         if (service_status) {
+            MainActivity.login = true;
             btn_login.setText("Logout");
             TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
             loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -66,12 +67,13 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.username = et_name.getText().toString();
                 MainActivity.password = et_password.getText().toString();
 
-                if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
-                    runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                            "Benutzerkennung oder Passwort leer!",
-                            Toast.LENGTH_LONG).show());
-                } else {
                     if (MainActivity.login == false) {
+                        if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
+                            runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                                    "Benutzerkennung oder Passwort leer!",
+                                    Toast.LENGTH_LONG).show());
+                        }
+
                         LocalDateTime localdatetime = LocalDateTime.now();
                         if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
                             checkFirstLogin(MainActivity.username, MainActivity.password);
@@ -83,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.LENGTH_LONG).show());
                         }
                     } else {
-                        if (isMyServiceRunning(Crawler_Service.class)) {
+                        //if (isMyServiceRunning(Crawler_Service.class)) {
+                        if (checkService()) {
                             stopService();
                         }
 
@@ -91,8 +94,12 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.login = false;
                         MainActivity.username = "";
                         MainActivity.password = "";
+
+                        TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
+                        loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                        loggingstatus_text.setTextColor(Color.RED);
+                        loggingstatus_text.setText("Not Logged in");
                     }
-                }
             }
         });
 
