@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("SetJavaScriptEnabled")
             @Override
             public void run() {
-
                 try {
                     HtmlPage grades = loginQIS();
                     runOnUiThread(new Runnable() {

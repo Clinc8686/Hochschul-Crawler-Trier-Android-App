@@ -210,9 +210,9 @@ public class Crawler_Service extends JobService {
                     sendPushNotification(semester, mod);
                 }
 
-            } else {
+            }/* else {
                 Log.e("Crawler_Service", "whileif false");
-            }
+            }*/
             mod = s;
         }
     }
