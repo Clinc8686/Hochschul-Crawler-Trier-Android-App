@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
+import android.os.Handler;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
@@ -96,6 +97,8 @@ public class Crawler_Service extends JobService {
     }
 
     public HtmlPage loginQIS() throws Exception {
+        sendPushNotificationpruefe();
+
         HtmlPage grades = null;
 
         WebClient webClient = new WebClient();
@@ -140,6 +143,8 @@ public class Crawler_Service extends JobService {
         Log.e("Crawler_Service", "login4");
 
         webClient.close();
+
+        closeNotification();
         return grades;
     }
 
@@ -219,33 +224,33 @@ public class Crawler_Service extends JobService {
 
     public void createNotificationStatus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("Clinc8686", "Clinc8686", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Clinc8686")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Hochschul-Crawler")
                 .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
                 .setContentTitle("Hochschul-Crawler-Service")
-                .setContentText("Prüfe auf neue Noten.")
+                .setContentText("Hochschul-Crawler läuft im Hintergrund.")
                 .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(true)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("Prüfe auf neue Noten."));
+                .setStyle(new NotificationCompat.BigTextStyle().bigText("Hochschul-Crawler läuft im Hintergrund."));
 
         NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
-        maCom.notify(1, builder.build());
+        maCom.notify(54295, builder.build());
     }
 
     public void sendPushNotification(String semester, String mod) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("Clinc8686Action", "Clinc8686Action", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel("Hochschul-Crawler-new-Grades", "Hochschul-Crawler-new-Grades", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Clinc8686Action")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Hochschul-Crawler-new-Grades")
                 .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
                 .setContentTitle("Hochschul-Crawler")
                 .setContentText("Es sind neue Noten verfügbar!")
@@ -255,7 +260,37 @@ public class Crawler_Service extends JobService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
 
         NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
-        maCom.notify(2, builder.build());
+        maCom.notify(54296, builder.build());
+    }
+
+    public void sendPushNotificationpruefe() {
+        NotificationManager manager = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("Hochschul-Crawler-Sync", "Hochschul-Crawler-Sync", NotificationManager.IMPORTANCE_DEFAULT);
+            manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Hochschul-Crawler-Sync")
+                .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
+                .setContentTitle("Hochschul-Crawler-Sync")
+                .setContentText("Prüfe auf neue Noten")
+                .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
+        maCom.notify(54297, builder.build());
+    }
+
+    private void closeNotification() {
+        try {
+            NotificationManagerCompat maCom = NotificationManagerCompat.from(Crawler_Service.this);
+            maCom.cancel(54297);
+        } catch (Exception e) {
+
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -264,7 +299,7 @@ public class Crawler_Service extends JobService {
         NotificationManager manager = getSystemService(NotificationManager.class);
         StatusBarNotification[] sbn = manager.getActiveNotifications();
         for (StatusBarNotification x: sbn) {
-            if (x.getNotification().getChannelId().equals("Clinc8686")) {
+            if (x.getNotification().getChannelId().equals("Hochschul-Crawler")) {
                 laeuft = true;
             }
         }

@@ -2,6 +2,8 @@ package de.clinc8686.hochschul_crawler;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
+                progressBarLogin.setProgress(0);
                 EditText et_name = findViewById(R.id.et_name);
                 EditText et_password = findViewById(R.id.et_password);
                 MainActivity.username = et_name.getText().toString();
@@ -90,6 +93,14 @@ public class MainActivity extends AppCompatActivity {
                             stopService();
                         }
 
+                        try {
+                            NotificationChannel channel = new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
+                            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                            mNotificationManager.cancel(54295);
+                        } catch (Exception e) {
+
+                        }
+
                         btn_login.setText("Login");
                         MainActivity.login = false;
                         MainActivity.username = "";
@@ -99,6 +110,11 @@ public class MainActivity extends AppCompatActivity {
                         loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                         loggingstatus_text.setTextColor(Color.RED);
                         loggingstatus_text.setText("Not Logged in");
+                        progressBarLogin.setProgress(0);
+
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                                "Service wurde gestoppt & Logindaten entfernt.",
+                                Toast.LENGTH_LONG).show());
                     }
             }
         });
