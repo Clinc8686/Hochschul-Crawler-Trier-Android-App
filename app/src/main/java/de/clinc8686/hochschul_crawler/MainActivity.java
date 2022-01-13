@@ -1,31 +1,20 @@
 package de.clinc8686.hochschul_crawler;
 
-import static android.app.Notification.DEFAULT_SOUND;
-import static android.app.Notification.DEFAULT_VIBRATE;
-
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
-import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-//import androidx.annotation.RequiresApi;
-//import androidx.core.app.NotificationCompat;
-//import androidx.core.app.NotificationManagerCompat;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-//import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatActivity;
-//import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +23,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-//import androidx.appcompat.app.AppCompatActivity;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -46,18 +33,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.nio.Buffer;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class MainActivity extends AppCompatActivity {
     public static String password;
@@ -71,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.e("Liste", String.valueOf(Crawler_Service.gradelist));
 
         progressBarLogin = findViewById(R.id.progressBarLogin);
         Button btn_login = findViewById(R.id.btn_login);
@@ -103,9 +78,8 @@ public class MainActivity extends AppCompatActivity {
                         if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
                             checkFirstLogin(MainActivity.username, MainActivity.password);
                             startService();
-                            progressBarLogin.setProgress(100);
                         } else {
-                            Log.e("HU", "Login between 0 and 5 o'clock");
+                            Log.e("HU", "Login between 1 and 5 o'clock");
                             runOnUiThread(() -> Toast.makeText(MainActivity.this,
                                     "Login failed: QIS zwischen 0 und 5 Uhr nicht erreichbar!",
                                     Toast.LENGTH_LONG).show());
@@ -156,21 +130,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        /*new Thread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @SuppressLint("SetJavaScriptEnabled")
-            @Override
-            public void run() {
-                HtmlPage grades = null;
-                try {
-                    grades = loginQIS();
-                    checkGrades(grades);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();*/
     }
 
     private void checkFirstLogin(String username, String password) {
@@ -193,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
                             Button btn_login = findViewById(R.id.btn_login);
                             btn_login.setText("Logout");
-                            progressBarLogin.setProgress(70);
+                            progressBarLogin.setProgress(100);
                         }
                     });
                 } catch (Throwable t) {
@@ -207,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
-                    Log.e("HU", "Failed to load login test", t);
+                    Log.e("Service-Crawler", "Failed to load login test", t);
                     runOnUiThread(() -> Toast.makeText(MainActivity.this,
                             "Anmeldung fehlgeschlagen! Benutzerkennung/Passwort falsch oder keine/schlechte Verbidung zum QIS!",
                             Toast.LENGTH_LONG).show());
@@ -218,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void startService() {
-        progressBarLogin.setProgress(80);
+
         // get the jobScheduler instance from current context
         JobScheduler jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
@@ -227,17 +186,24 @@ public class MainActivity extends AppCompatActivity {
 
         int period = (MainActivity.value * 60) * 1000;
 
+        PersistableBundle bundle = new PersistableBundle();
+        bundle.putString("username", MainActivity.username);
+        bundle.putString("password", MainActivity.password);
+
         // define that the job will run periodically in intervals of 15 minutes
-        JobInfo jobInfo = new JobInfo.Builder(8686, jobService).setPeriodic(period).setPersisted(true).build();
+        JobInfo jobInfo = new JobInfo.Builder(8686, jobService)
+                .setPeriodic(period)
+                .setPersisted(true)
+                .setExtras(bundle)
+                .build();
 
         // schedule/start the job
         int result = jobScheduler.schedule(jobInfo);
         if (result == JobScheduler.RESULT_SUCCESS) {
-            Log.d("Service", "Successfully scheduled job: " + result);
+            Log.e("Service-Crawler", "Successfully scheduled job: " + result);
         } else {
             Log.e("Service-Crawler", "RESULT_FAILURE: " + result);
         }
-        progressBarLogin.setProgress(90);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -250,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             return;
         }
-        Log.e("Jobundso", "gestoppt!");
+        Log.e("Service-Crawler", "gestoppt!");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -259,13 +225,13 @@ public class MainActivity extends AppCompatActivity {
 
         int Job_id = Integer.parseInt("8686");
 
-        if (Job_id == JobScheduler.RESULT_SUCCESS) {
-            Log.d("Service-Crawler", "Service läuft noch!");
-            return true;
-        } else {
-            Log.e("Service-Crawler", "Service läuft nicht mehr!");
-            return false;
+        for ( JobInfo jobInfo : scheduler.getAllPendingJobs() ) {
+            if ( jobInfo.getId() == 8686 ) {
+                Log.e("Crawler_Service", "jobläuft");
+                return true;
+            }
         }
+        return false;
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -292,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         hs_login_password.setValueAttribute(MainActivity.password);
         HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
         qis_login_page = button.click();
-        progressBarLogin.setProgress(40);
+        progressBarLogin.setProgress(45);
 
         HtmlPage qis_homepage;
         HtmlForm qis_login_form = qis_login_page.getFormByName("loginform");
@@ -302,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         qis_login_password.setValueAttribute(MainActivity.password);
         HtmlInput qis_login_button = qis_login_form.getInputByName("submit");
         qis_homepage = qis_login_button.click();
-        progressBarLogin.setProgress(50);
+        progressBarLogin.setProgress(60);
 
         HtmlAnchor a = qis_homepage.getAnchorByText("Prüfungsverwaltung");
         HtmlPage b = a.click();
@@ -312,107 +278,11 @@ public class MainActivity extends AppCompatActivity {
         HtmlPage f = e.click();
         HtmlAnchor g = f.getAnchorByText("Informatik - Digitale Medien und Spiele (PO-Version 2019)");
         grades = g.click();
-        progressBarLogin.setProgress(60);
+        progressBarLogin.setProgress(80);
 
         webClient.close();
         return grades;
-
-        //String grade_page_s = grades.asNormalizedText();
-        //Log.e("test", grades.asText().toString());
     }
-
-    /*@RequiresApi(api = Build.VERSION_CODES.O)
-    public void checkGrades(HtmlPage grades) throws Exception {
-        String grade_page_s = grades.asText().toString();
-        BufferedReader reader = new BufferedReader(new StringReader(grade_page_s));
-
-        int year = Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("yy")));
-        String semester = "";
-        if (LocalDate.now().getMonthValue() >= 10 || LocalDate.now().getMonthValue() <= 4) {
-            if(LocalDate.now().getMonthValue() >= 10 && LocalDate.now().getMonthValue() <= 12) {
-                semester = "WiSe " + year + "/" + (year+1);
-            } else {
-                semester = "WiSe " + year + "/" + (year-1);
-            }
-        } else {
-            semester = "SoSe " + year;
-        }
-
-        semester = "SoSe 21"; //temporär
-        String s;
-        String mod = "";
-        //Preferences prefs = Preferences.userRoot().node("Hochschul-Scraper");
-            while ((s = reader.readLine()) != null) {
-
-                if(((s.contains("BE") || s.contains("NB") || s.contains("NE")) && s.contains(semester)) && (!(mod.contains("PV") || mod.contains("Studienleistung")))) {
-                    mod = mod.replace("\t", " ");
-                    mod = mod.replace("  ", " ");
-
-                    s = s.replace("\t", " ");
-                    s = s.replace("  ", " ");
-                    String[] s_splitted = s.split("\\s+");
-
-                    String mod_reg = mod;
-                    mod_reg = mod_reg.replace("ä", "ae");
-                    mod_reg = mod_reg.replace("ö", "oe");
-                    mod_reg = mod_reg.replace("ü", "ue");
-                    mod_reg = mod_reg.replace("Ä", "AE");
-                    mod_reg = mod_reg.replace("Ö", "OE");
-                    mod_reg = mod_reg.replace("Ü", "UE");
-
-                    Log.e("QIS", mod);
-
-                    sendPushNotification(semester, mod);
-
-                    FileOutputStream fos = null;
-                    try {
-                        fos = openFileOutput("module.txt", MODE_PRIVATE);
-                        fos.write((semester + "|" + mod).getBytes());
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                            /*if (pref_exists == false) {
-                                prefs.put(mod_reg + "|" + s_splitted[1] + " " + s_splitted[2], "1");
-
-                                //try {
-                                    String jsonInputString = "{ \"modul\": \"" + mod_reg + "|" + s_splitted[1] + " " + s_splitted[2] + "\" }";
-                                    System.out.println("sende jetzt: " + jsonInputString);
-                                    StringEntity entity = new StringEntity(jsonInputString, ContentType.APPLICATION_FORM_URLENCODED);
-                                    HttpClient httpClient = HttpClientBuilder.create().build();
-                                    HttpPost request = new HttpPost("https://mariolampert.de/HS-Bot/API/index.php");
-                                    request.setEntity(entity);
-                                    HttpResponse response = httpClient.execute(request);
-                                //} catch (Exception e) {
-                                //    JOptionPane.showMessageDialog(new JFrame(), "Fehler!\nIch konnte keine Nachricht an den Server senden!.", "Hochschul-Crawler",
-                                //            JOptionPane.ERROR_MESSAGE);
-                                //    System.exit(0);
-                                //}
-                            }*/
-                /*}
-                mod = s;
-            }
-    }*/
-
-    /*public void sendPushNotification(String semester, String mod) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("Clinc8686", "Clinc8686", NotificationManager.IMPORTANCE_HIGH);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "Clinc8686")
-                .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
-                .setContentTitle("Hochschul-Crawler")
-                .setContentText("Es sind neue Noten verfügbar!")
-                .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
-
-        NotificationManagerCompat maCom = NotificationManagerCompat.from(MainActivity.this);
-        maCom.notify(1, builder.build());
-    }*/
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

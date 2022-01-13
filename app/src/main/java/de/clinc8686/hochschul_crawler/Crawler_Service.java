@@ -5,16 +5,16 @@ import static android.app.Notification.DEFAULT_VIBRATE;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.Service;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
-import android.os.IBinder;
+import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,41 +29,59 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class Crawler_Service extends JobService {
     public static String password;
     public static String username;
-    public static LinkedList<String> gradelist = new LinkedList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        Crawler_Service.password = MainActivity.password;
-        Crawler_Service.username = MainActivity.username;
+        Intent i = new Intent(Crawler_Service.this, Crawler_Service.class);
+        try {
+            Crawler_Service.password = jobParameters.getExtras().getString("password");
+            Crawler_Service.username = jobParameters.getExtras().getString("username");
+            Log.e("Crawler_Service", "entnehme Passwort1");
+        } catch (Exception e) {
+            Crawler_Service.username = i.getExtras().getString("username");
+            Crawler_Service.password = i.getExtras().getString("password");
+            Log.e("Crawler_Service", "entnehme Passwort2");
+        }
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.e("Crawler_Service", "pruefe NotificationVisibility");
+                    if (!isNotificationVisible()) {
+                        Log.e("Crawler_Service", "createNotificationStatus()");
+                        createNotificationStatus();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        Log.e("Crawler_Service", "pruefe Zeit");
         LocalDateTime localdatetime = LocalDateTime.now();
         if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        Log.e("Crawler_Service", "login aufruf");
                         HtmlPage grades = loginQIS();
+                        Log.e("Crawler_Service", "checkgrades aufruf");
                         checkGrades(grades);
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -77,6 +95,7 @@ public class Crawler_Service extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
+        Log.e("CrawlerService", "ichwurdegestoppt!");
         return true;
     }
 
@@ -91,6 +110,7 @@ public class Crawler_Service extends JobService {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setUseInsecureSSL(true);
         webClient.getOptions().setRedirectEnabled(true);
+        Log.e("Crawler_Service", "login1");
 
         HtmlPage qis_login_page;
         HtmlPage hs_Login = webClient.getPage("https://qis.hochschule-trier.de/qisserver/rds?state=user&type=0&category=menu.browse&startpage=portal.vm");
@@ -101,6 +121,7 @@ public class Crawler_Service extends JobService {
         hs_login_password.setValueAttribute(Crawler_Service.password);
         HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
         qis_login_page = button.click();
+        Log.e("Crawler_Service", "login2");
 
         HtmlPage qis_homepage;
         HtmlForm qis_login_form = qis_login_page.getFormByName("loginform");
@@ -110,6 +131,7 @@ public class Crawler_Service extends JobService {
         qis_login_password.setValueAttribute(Crawler_Service.password);
         HtmlInput qis_login_button = qis_login_form.getInputByName("submit");
         qis_homepage = qis_login_button.click();
+        Log.e("Crawler_Service", "login3");
 
         HtmlAnchor a = qis_homepage.getAnchorByText("Prüfungsverwaltung");
         HtmlPage b = a.click();
@@ -119,6 +141,7 @@ public class Crawler_Service extends JobService {
         HtmlPage f = e.click();
         HtmlAnchor g = f.getAnchorByText("Informatik - Digitale Medien und Spiele (PO-Version 2019)");
         grades = g.click();
+        Log.e("Crawler_Service", "login4");
 
         webClient.close();
         return grades;
@@ -126,28 +149,37 @@ public class Crawler_Service extends JobService {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void checkGrades(HtmlPage grades) throws Exception {
+        Log.e("Crawler_Service", "checke jetzt die grades");
         String grade_page_s = grades.asText().toString();
         BufferedReader reader = new BufferedReader(new StringReader(grade_page_s));
+        Intent i = new Intent(this, Crawler_Service.class);
 
+        Log.e("Crawler_Service", "jetzt parsen");
         int year = Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("yy")));
         String semester = "";
         if (LocalDate.now().getMonthValue() >= 10 || LocalDate.now().getMonthValue() <= 4) {
+            Log.e("Crawler_Service", "1.if true");
             if(LocalDate.now().getMonthValue() >= 10 && LocalDate.now().getMonthValue() <= 12) {
+                Log.e("Crawler_Service", "2.if true");
                 semester = "WiSe " + year + "/" + (year+1);
             } else {
+                Log.e("Crawler_Service", "2.if false");
                 semester = "WiSe " + year + "/" + (year-1);
             }
         } else {
+            Log.e("Crawler_Service", "1.if false");
             semester = "SoSe " + year;
         }
 
-        semester = "SoSe 21"; //temporär
+        //semester = "SoSe 21"; //temporär
         String s;
         String mod = "";
 
+        Log.e("Crawler_Service", "ich while");
         while ((s = reader.readLine()) != null) {
-
+            Log.e("Crawler_Service", "while schleife");
             if(((s.contains("BE") || s.contains("NB") || s.contains("NE")) && s.contains(semester)) && (!(mod.contains("PV") || mod.contains("Studienleistung")))) {
+                Log.e("Crawler_Service", "whileif true");
                 mod = mod.replace("\t", " ");
                 mod = mod.replace("  ", " ");
 
@@ -165,24 +197,59 @@ public class Crawler_Service extends JobService {
 
                 Log.e("QIS", mod);
 
-                //if (!gradelist.contains(semester+"|"+mod)) {
-                  //  gradelist.add(semester+"|"+mod);
-                    sendPushNotification(semester, mod);
-                //}
+                //sendPushNotification(semester, mod);
+                Log.e("connectToDatabase", "jopp");
 
+                i.putExtra("username", username);
+                i.putExtra("password", password);
+
+                i.getExtras().getString("username");
+                i.getExtras().getString("password");
+
+                if (connectToDatabase(semester+"|"+mod)) {
+                    sendPushNotification(semester, mod);
+                    Log.e("connectToDatabase", "jopp");
+                } else {
+                    Log.e("connectToDatabase", "nope");
+                    sendPushNotification(semester, mod);
+                }
+
+            } else {
+                Log.e("Crawler_Service", "whileif false");
             }
             mod = s;
         }
     }
 
-    public void sendPushNotification(String semester, String mod) {
+    public void createNotificationStatus() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("Clinc8686", "Clinc8686", NotificationManager.IMPORTANCE_HIGH);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(Crawler_Service.this, "Clinc8686")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Clinc8686")
+                .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
+                .setContentTitle("Hochschul-Crawler-Service")
+                .setContentText("Prüfe auf neue Noten.")
+                .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setOngoing(true)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText("Prüfe auf neue Noten."));
+
+        NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
+        maCom.notify(1, builder.build());
+    }
+
+    public void sendPushNotification(String semester, String mod) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("Clinc8686Action", "Clinc8686Action", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "Clinc8686Action")
                 .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
                 .setContentTitle("Hochschul-Crawler")
                 .setContentText("Es sind neue Noten verfügbar!")
@@ -191,7 +258,38 @@ public class Crawler_Service extends JobService {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
 
-        NotificationManagerCompat maCom = NotificationManagerCompat.from(Crawler_Service.this);
-        maCom.notify(1, builder.build());
+        NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
+        maCom.notify(2, builder.build());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private boolean isNotificationVisible () {
+        boolean laeuft = false;
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        StatusBarNotification[] sbn = manager.getActiveNotifications();
+        for (StatusBarNotification x: sbn) {
+            if (x.getNotification().getChannelId().equals("Clinc8686")) {
+                laeuft = true;
+            }
+        }
+        return laeuft;
+    }
+
+    public boolean connectToDatabase(String sem_mod) {
+        SQLiteDatabase sqlgrade = openOrCreateDatabase("HochschulCrawlerGrades",MODE_PRIVATE,null);
+        sqlgrade.execSQL("CREATE TABLE IF NOT EXISTS Grades(ID INTEGER PRIMARY KEY AUTOINCREMENT,SEMMOD TEXT NOT NULL);");
+        Cursor resultSet = sqlgrade.rawQuery("Select SEMMOD from Grades WHERE SEMMOD = \'"+sem_mod+"\'",null);
+
+        if (!resultSet.moveToFirst()) {
+            sqlgrade.execSQL("INSERT INTO Grades (SEMMOD) VALUES(\""+sem_mod+"\");");
+            Log.e("SQL-if", "nix");
+            resultSet.close();
+            //sqlgrade.close();
+            return false;
+        }
+
+        resultSet.close();
+        //sqlgrade.close();
+        return true;
     }
 }
