@@ -70,13 +70,21 @@
 
     <ProgressBar
         android:id="@+id/progressBarLogin"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:indeterminateTint="#FF5722"
+        android:visibility="invisible" />
+
+    <!--<ProgressBar
+        android:id="@+id/progressBarLogin"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_marginTop="20dp"
         android:max="100"
         android:progress="0"
         android:progressTint="#31FF22"
         android:layout_width="250dp"
-        android:layout_height="20dp" />
+        android:layout_height="20dp" />-->
 
     <TextView
         android:id="@+id/loggingstatus_text"
@@ -96,21 +104,6 @@
         android:layout_marginTop="20dp"
         android:text="Wähle hier das Aktualisierungsintervall aus"
         android:textColor="#FFFFFF" />
-
-    <!--<SeekBar
-        android:id="@+id/seekBar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="250dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="10dp"
-        android:min="5"
-        android:max="60"
-        android:thumbTint="#FF5722"
-        android:background="@drawable/rounded_corner"
-        android:backgroundTint="#fff"
-        android:progressDrawable="@drawable/seekbar_thumb"
-
-        android:progress="30" />-->
 
     <SeekBar
         android:id="@+id/seekBar"

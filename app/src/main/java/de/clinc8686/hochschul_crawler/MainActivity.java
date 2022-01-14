@@ -1,7 +1,6 @@
 package de.clinc8686.hochschul_crawler;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.job.JobInfo;
@@ -24,15 +23,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-
 import java.time.LocalDateTime;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,54 +31,52 @@ public class MainActivity extends AppCompatActivity {
     public static boolean login = false;
     public static int value = 60;
     public static ProgressBar progressBarLogin;
+    private long timestampTimeout = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         progressBarLogin = findViewById(R.id.progressBarLogin);
         Button btn_login = findViewById(R.id.btn_login);
         boolean service_status = checkService();
         if (service_status) {
             MainActivity.login = true;
             btn_login.setText("Logout");
-            TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
-            loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            loggingstatus_text.setTextColor(Color.GREEN);
-            loggingstatus_text.setText("Logged in");
+            loginsuccess();
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                progressBarLogin.setProgress(0);
+                progressBarLogin.setVisibility(View.VISIBLE);
                 EditText et_name = findViewById(R.id.et_name);
                 EditText et_password = findViewById(R.id.et_password);
                 MainActivity.username = et_name.getText().toString();
                 MainActivity.password = et_password.getText().toString();
 
-                    if (MainActivity.login == false) {
+                    if (!MainActivity.login) {
                         if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
                             runOnUiThread(() -> Toast.makeText(MainActivity.this,
                                     "Benutzerkennung oder Passwort leer!",
                                     Toast.LENGTH_LONG).show());
+                        } else {
+                            LocalDateTime localdatetime = LocalDateTime.now();
+                            if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
+                                checkFirstLogin(MainActivity.username, MainActivity.password);
+                                startService();
+                            } else {
+                                Log.e("HU", "Login between 1 and 5 o'clock");
+                                runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                                        "Login failed: QIS zwischen 0 und 5 Uhr nicht erreichbar!",
+                                        Toast.LENGTH_LONG).show());
+                            }
                         }
 
-                        LocalDateTime localdatetime = LocalDateTime.now();
-                        if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
-                            checkFirstLogin(MainActivity.username, MainActivity.password);
-                            startService();
-                        } else {
-                            Log.e("HU", "Login between 1 and 5 o'clock");
-                            runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                                    "Login failed: QIS zwischen 0 und 5 Uhr nicht erreichbar!",
-                                    Toast.LENGTH_LONG).show());
-                        }
                     } else {
-                        //if (isMyServiceRunning(Crawler_Service.class)) {
+                        //Beim neustarten der App, prüfen ob Service noch läuft, weil Anmeldung nicht mehr vorhanden ist. Ggf. Service stoppen
                         if (checkService()) {
                             stopService();
                         }
@@ -101,16 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
                         }
 
+                        progressBarLogin.setVisibility(View.INVISIBLE);
                         btn_login.setText("Login");
                         MainActivity.login = false;
                         MainActivity.username = "";
                         MainActivity.password = "";
-
-                        TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
-                        loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                        loggingstatus_text.setTextColor(Color.RED);
-                        loggingstatus_text.setText("Not Logged in");
-                        progressBarLogin.setProgress(0);
+                        loginfailed();
 
                         runOnUiThread(() -> Toast.makeText(MainActivity.this,
                                 "Service wurde gestoppt & Logindaten entfernt.",
@@ -121,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
         SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            //int value;
             TextView text_seekbar_minute = findViewById(R.id.text_seekbar_minute);
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -160,39 +143,88 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    HtmlPage grades = loginQIS();
-                    runOnUiThread(new Runnable() {
+                    long difftime = System.currentTimeMillis() - timestampTimeout;
+                    Log.e("difftime", difftime + "");
+                    if (difftime < 300000) {
+                        throw new IllegalAccessException("gesperrt - timeout");
+                    }
+
+                    Crawler_Service.password = MainActivity.password;
+                    Crawler_Service.username = MainActivity.username;
+                    timestampTimeout = System.currentTimeMillis();
+                    Crawler_Service.loginQIS();
+
+                    runOnUiThread(new Runnable() {  //Anmeldung hat 1A funktioniert
                         @Override
                         public void run() {
-                            TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
-                            loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                            loggingstatus_text.setTextColor(Color.GREEN);
-                            loggingstatus_text.setText("Logged in");
+                            loginsuccess();
                             MainActivity.login = true;
 
                             Button btn_login = findViewById(R.id.btn_login);
                             btn_login.setText("Logout");
-                            progressBarLogin.setProgress(100);
-                        }
-                    });
-                } catch (Throwable t) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
-                            loggingstatus_text.setText("Not Logged In");
-                            loggingstatus_text.setTextColor(Color.RED);
-                            MainActivity.login = false;
+                            progressBarLogin.setVisibility(View.INVISIBLE);
                         }
                     });
 
+                } catch (IllegalAccessException e) {    //Anmeldung schlug fehl, weil zu oft falsches Passwort/Username
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBarLogin.setVisibility(View.INVISIBLE);
+                            loginfailed();
+                            MainActivity.login = false;
+                        }
+                    });
+                    Log.e("Service-Crawler", "Failed to load login test", e);
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                            "Anmeldung fehlgeschlagen! Zu oft falscher Benutzername/Passwort eingegeben! Deine IP-Adresse ist für einige Minuten gesperrt.",
+                            Toast.LENGTH_LONG).show());
+                    cancelNotifications();
+
+                } catch (Throwable t) {     //Anmeldung schlug aus anderen Gründen fehl
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBarLogin.setVisibility(View.INVISIBLE);
+                            loginfailed();
+                            MainActivity.login = false;
+                        }
+                    });
                     Log.e("Service-Crawler", "Failed to load login test", t);
                     runOnUiThread(() -> Toast.makeText(MainActivity.this,
                             "Anmeldung fehlgeschlagen! Benutzerkennung/Passwort falsch oder keine/schlechte Verbidung zum QIS!",
                             Toast.LENGTH_LONG).show());
+                    cancelNotifications();
                 }
             }
         }).start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void cancelNotifications() {
+        try {
+            NotificationChannel channel = new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(54295);
+            mNotificationManager.cancel(54296);
+            mNotificationManager.cancel(54297);
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void loginsuccess() {
+        TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
+        loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        loggingstatus_text.setTextColor(Color.GREEN);
+        loggingstatus_text.setText("Logged in");
+    }
+
+    private void loginfailed() {
+        TextView loggingstatus_text = findViewById(R.id.loggingstatus_text);
+        loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        loggingstatus_text.setTextColor(Color.RED);
+        loggingstatus_text.setText("Not Logged in");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -243,71 +275,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean checkService() {
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE ) ;
 
-        int Job_id = Integer.parseInt("8686");
-
         for ( JobInfo jobInfo : scheduler.getAllPendingJobs() ) {
             if ( jobInfo.getId() == 8686 ) {
                 Log.e("Crawler_Service", "jobläuft");
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @SuppressLint("SetJavaScriptEnabled")
-    public HtmlPage loginQIS() throws Exception {
-        progressBarLogin.setProgress(10);
-        HtmlPage grades = null;
-
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setTimeout(30000);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-        webClient.getOptions().setRedirectEnabled(true);
-        progressBarLogin.setProgress(30);
-
-        HtmlPage qis_login_page;
-        HtmlPage hs_Login = webClient.getPage("https://qis.hochschule-trier.de/qisserver/rds?state=user&type=0&category=menu.browse&startpage=portal.vm");
-        HtmlForm hs_login_form = hs_Login.getFormByName("login");
-        HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
-        HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
-        hs_login_username.setValueAttribute(MainActivity.username);
-        hs_login_password.setValueAttribute(MainActivity.password);
-        HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
-        qis_login_page = button.click();
-        progressBarLogin.setProgress(45);
-
-        HtmlPage qis_homepage;
-        HtmlForm qis_login_form = qis_login_page.getFormByName("loginform");
-        HtmlTextInput qis_login_username = qis_login_form.getInputByName("asdf");
-        HtmlPasswordInput qis_login_password = qis_login_form.getInputByName("fdsa");
-        qis_login_username.setValueAttribute(MainActivity.username);
-        qis_login_password.setValueAttribute(MainActivity.password);
-        HtmlInput qis_login_button = qis_login_form.getInputByName("submit");
-        qis_homepage = qis_login_button.click();
-        progressBarLogin.setProgress(60);
-
-        HtmlAnchor a = qis_homepage.getAnchorByText("Prüfungsverwaltung");
-        HtmlPage b = a.click();
-        HtmlAnchor c = b.getAnchorByText("Notenspiegel");
-        HtmlPage d = c.click();
-        HtmlAnchor e = d.getAnchorByText("Abschluss Bachelor of Science");
-        HtmlPage f = e.click();
-        HtmlAnchor g = f.getAnchorByText("Informatik - Digitale Medien und Spiele (PO-Version 2019)");
-        grades = g.click();
-        progressBarLogin.setProgress(80);
-
-        webClient.close();
-        return grades;
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;
             }
         }
