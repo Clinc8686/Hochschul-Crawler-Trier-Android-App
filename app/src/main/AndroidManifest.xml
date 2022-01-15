@@ -34,12 +34,5 @@
             android:label="Hochschul-Crawler"
             android:permission="android.permission.BIND_JOB_SERVICE"
             tools:ignore="MissingClass,WrongManifestParent" />
-
-        <receiver android:name=".Crawler_Service" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

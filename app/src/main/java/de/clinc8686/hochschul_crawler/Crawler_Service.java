@@ -39,7 +39,6 @@ public class Crawler_Service extends JobService {
     public static String password;
     public static String username;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Intent i = new Intent(Crawler_Service.this, Crawler_Service.class);
@@ -151,7 +150,6 @@ public class Crawler_Service extends JobService {
         return grades;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void checkGrades(HtmlPage grades) throws Exception {
         Log.e("Crawler_Service", "checke jetzt die grades");
         String grade_page_s = grades.asText().toString();
@@ -215,52 +213,50 @@ public class Crawler_Service extends JobService {
     }
 
     public void createNotificationChannel(String channel, String semester, String mod) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel NChannel;
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channel)
-                    .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
-                    .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        NotificationChannel NChannel;
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channel)
+                .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
+                .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-            NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
-            NotificationManager manager = getSystemService(NotificationManager.class);
+        NotificationManagerCompat maCom = NotificationManagerCompat.from(this);
+        NotificationManager manager = getSystemService(NotificationManager.class);
 
-            switch (channel) {
-                case "Hochschul-Crawler":
-                    NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
-                    manager.createNotificationChannel(NChannel);
+        switch (channel) {
+            case "Hochschul-Crawler":
+                NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
+                manager.createNotificationChannel(NChannel);
 
-                    builder.setContentTitle("Hochschul-Crawler-Service")
-                            .setContentText("Hochschul-Crawler läuft im Hintergrund.")
-                            .setOngoing(true)
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText("Hochschul-Crawler läuft im Hintergrund."));
+                builder.setContentTitle("Hochschul-Crawler-Service")
+                        .setContentText("Hochschul-Crawler läuft im Hintergrund.")
+                        .setOngoing(true)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Hochschul-Crawler läuft im Hintergrund."));
 
-                    maCom.notify(54295, builder.build());
-                    break;
-                case "Neue Noten":
-                    NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
-                    manager.createNotificationChannel(NChannel);
+                maCom.notify(54295, builder.build());
+                break;
+            case "Neue Noten":
+                NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_HIGH);
+                manager.createNotificationChannel(NChannel);
 
-                    builder.setContentTitle("Hochschul-Crawler")
-                            .setContentText("Es sind neue Noten verfügbar!")
-                            .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
+                builder.setContentTitle("Hochschul-Crawler")
+                        .setContentText("Es sind neue Noten verfügbar!")
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
 
-                    maCom.notify(54296, builder.build());
-                    break;
-                case "Prüfe neue Noten":
-                    NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
-                    manager.createNotificationChannel(NChannel);
+                maCom.notify(54296, builder.build());
+                break;
+            case "Prüfe neue Noten":
+                NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_LOW);
+                manager.createNotificationChannel(NChannel);
 
-                    builder.setContentTitle("Hochschul-Crawler-Sync")
-                            .setContentText("Prüfe auf neue Noten")
-                            .setAutoCancel(true);
+                builder.setContentTitle("Hochschul-Crawler-Sync")
+                        .setContentText("Prüfe auf neue Noten")
+                        .setAutoCancel(true);
 
-                    maCom.notify(54297, builder.build());
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + channel);
-            }
+                maCom.notify(54297, builder.build());
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + channel);
         }
     }
 

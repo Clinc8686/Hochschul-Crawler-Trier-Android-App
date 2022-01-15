@@ -20,11 +20,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.time.LocalDateTime;
 
+@SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity {
     public static String password;
     public static String username;
@@ -33,13 +35,13 @@ public class MainActivity extends AppCompatActivity {
     public static ProgressBar progressBarLogin;
     private long timestampTimeout = 0;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         progressBarLogin = findViewById(R.id.progressBarLogin);
         Button btn_login = findViewById(R.id.btn_login);
+
         boolean service_status = checkService();
         if (service_status) {
             MainActivity.login = true;
@@ -48,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         btn_login.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 progressBarLogin.setVisibility(View.VISIBLE);
@@ -57,54 +58,71 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.username = et_name.getText().toString();
                 MainActivity.password = et_password.getText().toString();
 
-                    if (!MainActivity.login) {
-                        if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
-                            runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                if (!MainActivity.login) {
+                    if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this,
                                     "Benutzerkennung oder Passwort leer!",
                                     Toast.LENGTH_LONG).show());
-                        } else {
-                            LocalDateTime localdatetime = LocalDateTime.now();
-                            if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
-                                checkFirstLogin(MainActivity.username, MainActivity.password);
-                                startService();
-                            } else {
-                                Log.e("HU", "Login between 1 and 5 o'clock");
-                                runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                                        "Login failed: QIS zwischen 0 und 5 Uhr nicht erreichbar!",
-                                        Toast.LENGTH_LONG).show());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                loginfailed();
+                                progressBarLogin.setVisibility(View.INVISIBLE);
+                                MainActivity.login = false;
                             }
-                        }
-
+                        });
                     } else {
-                        //Beim neustarten der App, prüfen ob Service noch läuft, weil Anmeldung nicht mehr vorhanden ist. Ggf. Service stoppen
-                        if (checkService()) {
-                            stopService();
+                        LocalDateTime localdatetime = LocalDateTime.now();
+                        if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
+                            checkFirstLogin(MainActivity.username, MainActivity.password);
+                            startService();
+                        } else {
+                             Log.e("HU", "Login between 1 and 5 o'clock");
+                             runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                                    "Login failed: QIS zwischen 0 und 5 Uhr nicht erreichbar!",
+                                    Toast.LENGTH_LONG).show());
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    loginfailed();
+                                    progressBarLogin.setVisibility(View.INVISIBLE);
+                                    MainActivity.login = false;
+                                }
+                            });
                         }
-
-                        try {
-                            NotificationChannel channel = new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
-                            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                            mNotificationManager.cancel(54295);
-                        } catch (Exception e) {
-
-                        }
-
-                        progressBarLogin.setVisibility(View.INVISIBLE);
-                        btn_login.setText("Login");
-                        MainActivity.login = false;
-                        MainActivity.username = "";
-                        MainActivity.password = "";
-                        loginfailed();
-
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this,
-                                "Service wurde gestoppt & Logindaten entfernt.",
-                                Toast.LENGTH_LONG).show());
                     }
+                } else {
+                    //Beim neustarten der App, prüfen ob Service noch läuft, weil Anmeldung nicht mehr vorhanden ist. Ggf. Service stoppen
+                    if (checkService()) {
+                        stopService();
+                    }
+
+                    try {
+                        NotificationChannel channel = new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
+                        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        mNotificationManager.cancel(54295);
+                    } catch (Exception e) {
+
+                    }
+
+                    loginfailed();
+                    progressBarLogin.setVisibility(View.INVISIBLE);
+                    MainActivity.login = false;
+                    btn_login.setText("Login");
+                    MainActivity.username = "";
+                    MainActivity.password = "";
+
+                    runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                            "Service wurde gestoppt & Logindaten entfernt.",
+                             Toast.LENGTH_LONG).show());
+                }
             }
         });
 
         SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @SuppressWarnings("FieldMayBeFinal")
             TextView text_seekbar_minute = findViewById(R.id.text_seekbar_minute);
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -138,7 +156,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFirstLogin(String username, String password) {
         new Thread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
             @SuppressLint("SetJavaScriptEnabled")
             @Override
             public void run() {
@@ -158,11 +175,10 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             loginsuccess();
+                            //progressBarLogin.setVisibility(View.GONE);
                             MainActivity.login = true;
-
                             Button btn_login = findViewById(R.id.btn_login);
                             btn_login.setText("Logout");
-                            progressBarLogin.setVisibility(View.INVISIBLE);
                         }
                     });
 
@@ -170,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressBarLogin.setVisibility(View.INVISIBLE);
                             loginfailed();
+                            progressBarLogin.setVisibility(View.INVISIBLE);
                             MainActivity.login = false;
                         }
                     });
@@ -185,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressBarLogin.setVisibility(View.INVISIBLE);
                             loginfailed();
+                            progressBarLogin.setVisibility(View.INVISIBLE);
                             MainActivity.login = false;
                         }
                     });
@@ -200,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void cancelNotifications() {
         try {
             NotificationChannel channel = new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
@@ -218,6 +233,11 @@ public class MainActivity extends AppCompatActivity {
         loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         loggingstatus_text.setTextColor(Color.GREEN);
         loggingstatus_text.setText("Logged in");
+
+        TextView appCloseText = findViewById(R.id.appCloseText);
+        appCloseText.setVisibility(View.VISIBLE);
+
+        progressBarLogin.setVisibility(View.GONE);
     }
 
     private void loginfailed() {
@@ -225,6 +245,9 @@ public class MainActivity extends AppCompatActivity {
         loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         loggingstatus_text.setTextColor(Color.RED);
         loggingstatus_text.setText("Not Logged in");
+
+        TextView appCloseText = findViewById(R.id.appCloseText);
+        appCloseText.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
