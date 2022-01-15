@@ -140,9 +140,9 @@ public class Crawler_Service extends JobService {
         HtmlPage b = a.click();
         HtmlAnchor c = b.getAnchorByText("Notenspiegel");
         HtmlPage d = c.click();
-        HtmlAnchor e = d.getAnchorByText("Abschluss Bachelor of Science");
+        HtmlAnchor e = d.getFirstByXPath("//a[starts-with(@class, 'regular') and contains(text(),'Abschluss')]");
         HtmlPage f = e.click();
-        HtmlAnchor g = f.getAnchorByText("Informatik - Digitale Medien und Spiele (PO-Version 2019)");
+        HtmlAnchor g = f.getFirstByXPath("//a[starts-with(@href, 'https://qis.hochschule-trier.de') and starts-with (@title, 'Leistungen für')]");
         grades = g.click();
         Log.e("Crawler_Service", "login4");
 

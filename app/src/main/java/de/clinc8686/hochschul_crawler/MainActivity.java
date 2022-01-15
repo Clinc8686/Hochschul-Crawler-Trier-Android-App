@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 MainActivity.value = i;
                 text_seekbar_minute.setText("Alle " + MainActivity.value + " Minuten wird aktualisiert.\n" +
-                        "Geschätzte Datennutzung im Monat: " + dataUsage(MainActivity.value));
+                        "Geschätzte Datennutzung im Monat: \n" + dataUsage(MainActivity.value));
             }
 
             @Override

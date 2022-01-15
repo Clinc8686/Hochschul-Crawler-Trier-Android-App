@@ -82,6 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
+        android:textAlignment="center"
         android:text="Du kannst die App nun schließen.\nBei einem Smartphone-Neustart musst du dich aber neu anmelden."
         android:textColor="#FFFFFF"
         android:visibility="gone"/>
