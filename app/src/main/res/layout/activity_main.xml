@@ -14,26 +14,27 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:height="70dp"
         android:gravity="center_vertical"
-        android:text="Hochschule Trier Noten Crawler"
+        android:text="Noten Crawler"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="23sp"
         tools:ignore="RtlCompat" />
     <!--        android:background="@drawable/rounded_corner"-->
+
     <EditText
         android:id="@+id/et_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="10dp"
         android:width="250dp"
         android:height="50dp"
         android:background="@drawable/inputfield"
         android:gravity="center_vertical"
+        android:hint="Benutzerkennung"
         android:maxLength="15"
-        android:hint="Hochschulkennung"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -74,7 +75,50 @@
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:indeterminateTint="#FF5722"
-        android:visibility="invisible" />
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/linearlayoutcheckboxes"
+        android:layout_width="310dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+    <CheckBox
+        android:id="@+id/checkBoxTrier"
+        android:layout_width="20dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:checked="true"
+        android:text="HS Trier"
+        android:buttonTint="#FF5722"
+        android:enabled="true"
+        />
+
+    <CheckBox
+        android:id="@+id/checkBoxAachen"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:text="FH Aachen"
+        android:buttonTint="#FF5722"
+        android:enabled="true"
+        />
+
+        <CheckBox
+            android:id="@+id/checkBoxKoblenz"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
+            android:text="HS Koblenz"
+            android:buttonTint="#FF5722"
+            android:enabled="true"
+            />
+
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/appCloseText"
@@ -104,7 +148,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:textSize="17sp"
-        android:text="Not Logged In"
+        android:text="Not logged in"
         android:textColor="#FF0000" />
 
     <TextView
