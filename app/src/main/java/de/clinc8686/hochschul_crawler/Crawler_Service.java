@@ -6,26 +6,20 @@ import static android.app.Notification.DEFAULT_VIBRATE;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.job.JobParameters;
-import android.app.job.JobService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
@@ -37,7 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@RequiresApi(api = Build.VERSION_CODES.O)
+
 public class Crawler_Service extends BroadcastReceiver {
     public static String password;
     public static String username;
@@ -196,7 +190,7 @@ public class Crawler_Service extends BroadcastReceiver {
                 semester = "WiSe " + year + "/" + (year+1);
             } else {
                 Log.e("Crawler_Service", "2.if false");
-                semester = "WiSe " + year + "/" + (year-1);
+                semester = "WiSe " + (year-1) + "/" + year;
             }
         } else {
             Log.e("Crawler_Service", "1.if false");
@@ -208,7 +202,6 @@ public class Crawler_Service extends BroadcastReceiver {
 
         Log.e("Crawler_Service", "ich while");
         while ((s = reader.readLine()) != null) {
-            //Log.e("Crawler_Service", "while schleife");
             if(((s.contains("BE") || s.contains("NB") || s.contains("NE")) && s.contains(semester)) && (!(mod.contains("PV") || mod.contains("Studienleistung")))) {
                 Log.e("Crawler_Service", "whileif true");
                 mod = mod.replace("\t", " ");
@@ -227,8 +220,10 @@ public class Crawler_Service extends BroadcastReceiver {
                 mod_reg = mod_reg.replace("Ü", "UE");*/
 
                 Log.e("connectToDatabase", "jopp");
-                createNotificationChannel("Neue Noten", semester, mod);
-                connectToDatabase(semester+"|"+mod);
+
+                if (connectToDatabase(semester+"|"+mod)) {
+                    createNotificationChannel("Neue Noten", semester, mod);
+                }
             }
             mod = s;
         }
@@ -304,7 +299,7 @@ public class Crawler_Service extends BroadcastReceiver {
         return laeuft;
     }
 
-    public void connectToDatabase(String sem_mod) {
+    public boolean connectToDatabase(String sem_mod) {
         SQLiteDatabase sqlgrade = context.openOrCreateDatabase("HochschulCrawlerGrades", Context.MODE_PRIVATE,null);
         sqlgrade.execSQL("CREATE TABLE IF NOT EXISTS Grades(ID INTEGER PRIMARY KEY AUTOINCREMENT,SEMMOD TEXT NOT NULL);");
         Cursor resultSet = sqlgrade.rawQuery("Select SEMMOD from Grades WHERE SEMMOD = \'"+sem_mod+"\'",null);
@@ -313,21 +308,9 @@ public class Crawler_Service extends BroadcastReceiver {
             sqlgrade.execSQL("INSERT INTO Grades (SEMMOD) VALUES(\""+sem_mod+"\");");
             Log.e("SQL-if", "nix");
             resultSet.close();
-            return;
+            return true;
         }
-
         resultSet.close();
-    }
-
-    private void cancelNotifications() {
-        try {
-            new NotificationChannel("Hochschul-Crawler", "Hochschul-Crawler", NotificationManager.IMPORTANCE_HIGH);
-            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(54295);
-            mNotificationManager.cancel(54296);
-            mNotificationManager.cancel(54297);
-        } catch (Exception ignored) {
-
-        }
+        return false;
     }
 }
