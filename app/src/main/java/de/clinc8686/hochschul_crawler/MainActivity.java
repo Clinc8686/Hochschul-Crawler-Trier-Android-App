@@ -2,13 +2,12 @@ package de.clinc8686.hochschul_crawler;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,14 +16,12 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private ProgressBar progressBarLogin;
     private long timestampTimeout = 0;
+    @SuppressLint("StaticFieldLeak")
     public static CheckBox checkBoxTrier, checkBoxAachen, checkBoxKoblenz;
     private LinearLayout linearlayoutcheckboxes;
     private static String checkbox = "checkBoxTrier";
@@ -60,6 +58,32 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.login = true;
             btn_login.setText("Logout");
             loginsuccess();
+        }
+
+        if (!login) {
+            DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        finishAndRemoveTask();
+                        break;
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Datenschutzerklärung")
+                    .setMessage("Die Nutzung dieser Applikation ist mit der Verarbeitung personenbezogener Daten verbunden. " +
+                            "\n\nDie Applikation verarbeitet personenbezogene Daten unter Beachtung der einschlägigen Datenschutzvorschriften. " +
+                            "\nEine Datenverarbeitung findet nur mit Ihrer Erlaubnis statt. " +
+                            "\n\nAllgemeine Angaben: Die Informationen werden durch das Kontaktformular erhoben und sind Grundlage nach Art. 6, 1a DSGVO zur Verwendung der Applikation benötigt. " +
+                            "\n\nDatenweitergabe: Zur Abfrage der Informationen werden die Daten an die Server der jeweiligen Hochschule übermittelt und dortige Informationen ausgewertet. " +
+                            "Hierzu zählt die Rechenzentrumskennung, das Passwort und bei der Hochschule abgespeicherte Daten wie Modulfächer und die persönliche Leistung der jeweiligen Module (Noten, bestandene oder nicht bestandene Module). " +
+                            "\n\nWiderruf: Die Einwilligung zur Erhebung, Verarbeitung, Speicherung und Nutzung personenbezogener Daten kann jederzeit mit Wirkung durch Entfernung/Deinstallation der Apllikation von ihrem Gerät widerrufen werden. " +
+                            "\n\nWenn Sie Fragen oder Anregungen zu diesen Informationen haben oder wegen der Geltendmachung Ihrer Rechte an uns wenden möchten, richten Sie Ihre Anfrage bitte an: Mario Lampert, hochschulcrawler@gmail.com")
+                    .setPositiveButton("Ich akzeptiere", dialogClickListener)
+                    .setNegativeButton("Ich lehne ab", dialogClickListener).show();
         }
 
         btn_login.setOnClickListener(view -> {
@@ -95,9 +119,29 @@ public class MainActivity extends AppCompatActivity {
                             MainActivity.login = false;
                         });
                     } else {
-                        checkFirstLogin();
                         //startService();
-                        startAlarm();
+                        //startAlarm();
+                        checkFirstLogin();
+                        if (!checkIntent()) {
+                            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+                            builder1.setTitle("Hinweis!");
+                            builder1.setMessage("Ohne die folgende Berechtigung kann die App nicht optimal im Hintergrund funktionieren.");
+                            builder1.setCancelable(true);
+                            builder1.setNeutralButton(android.R.string.ok,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            startAlarm();
+                                            dialog.cancel();
+                                            //stopAlarm();
+                                            //finishAndRemoveTask();
+                                        }
+                                    });
+
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                        } else {
+                            startAlarm();
+                        }
                     }
                 }
             } else {
@@ -303,8 +347,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         if (powerManager.isIgnoringBatteryOptimizations(getPackageName())) {
             intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-        }
-        else {
+        } else {
             intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
@@ -318,6 +361,11 @@ public class MainActivity extends AppCompatActivity {
         i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pi = PendingIntent.getBroadcast(this, 8686, i, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), (MainActivity.value * 60) * 1000, pi);
+    }
+
+    public boolean checkIntent() {
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        return powerManager.isIgnoringBatteryOptimizations(getPackageName());
     }
 
     public void stopAlarm() {
