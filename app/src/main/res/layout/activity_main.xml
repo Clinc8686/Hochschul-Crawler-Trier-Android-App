@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -22,7 +21,6 @@
         android:textColor="#FFFFFF"
         android:textSize="23sp"
         tools:ignore="RtlCompat" />
-    <!--        android:background="@drawable/rounded_corner"-->
 
     <EditText
         android:id="@+id/et_name"
@@ -127,19 +125,9 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:textAlignment="center"
-        android:text="Du kannst die App nun schließen.\nBei einem Smartphone-Neustart musst du dich aber neu anmelden."
+        android:text="@string/noteRestart"
         android:textColor="#FFFFFF"
         android:visibility="gone"/>
-
-    <!--<ProgressBar
-        android:id="@+id/progressBarLogin"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_marginTop="20dp"
-        android:max="100"
-        android:progress="0"
-        android:progressTint="#31FF22"
-        android:layout_width="250dp"
-        android:layout_height="20dp" />-->
 
     <TextView
         android:id="@+id/loggingstatus_text"
@@ -182,7 +170,7 @@
 
     <TextView
         android:id="@+id/text_seekbar_minute"
-        android:text="Alle 60 Minuten wird aktualisiert.\n Geschätzte Datennutzung im Monat: 387 MByte"
+        android:text="@string/dataEstimated"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -192,7 +180,7 @@
 
     <TextView
         android:id="@+id/text_qis_abschaltung"
-        android:text="Ausgenommen Nachts. Zwischen 0 und 5 Uhr ist das QIS nicht erreichbar."
+        android:text="@string/exceptNight"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
