@@ -1,4 +1,34 @@
 <resources>
     <string name="app_name">Hochschul-Crawler</string>
     <string name="title_activity_main">Hochschul-Crawler</string>
+    <string name="privacypolicy">1. Beschreibung und Umfang der Datenverarbeitung:
+                            \nBeim Absenden des nachfolgenden Formulars werden folgende personenbezogene Daten durch die Applikation erhoben und abgespeichert:
+                            \n● Rechenzentrums-/Fachhochschulkennung
+                            \n● Das zugehörige Passwort
+                            \n● Belegte und absolvierte Modulfächer an der Hochschule
+                            \n\n2. Zweck der Datenverarbeitung:
+                            \nDie vorübergehende Speicherung der unter 1. genannten Daten dient dem Zweck der Übermittlung an die Hochschule, sich dort anzumelden und die eigenen Leistungen auszuwerten.
+                            \n\n3. Dauer der Speicherung:
+                            \nDie personenbezognen Daten werden unwiderruflich und sofortig gelöscht, sobald der Nutzer die Applikation über die im Betriebssystem vorgegebene Methode zur Deinstallation vom Gerät entfernt.
+                            \n\n4. Datenweitergabe:
+                            \nEine Weitergabe der Rechenzentrums-/Fachhochschulkennung und des Passworts erfolgt zur Abfrage der jeweiligen Modulinformationen auf und an die Server der gewählten Hochschule.
+                            \n\n5. Verantwortliche Stelle und Ansprechpartner für Fragen des Datenschutzes:
+                            \nVerantwortlich für die Verarbeitung der personenbezogenen Daten auf den Hochschul-Servern ist die jeweilige Hochschule.
+                            \nVerantwortlich für die Verarbeitung personenbezogener Daten in der Hochschul-Crawler Applikation ist:
+                            \nMario Lampert
+                            \nE-Mail: hochschulcrawler@gmail.com
+                            \n\n6. Rechtsgrundlage:
+                            \nSoweit für die Verarbeitungsvorgänge personenbezogener Daten eine Einwilligung der betroffenen Person eingeholt wird, dient Art. 6 Abs. 1 lit. a EU-Datenschutzgrundverordnung (DSGVO) als Rechtsgrundlage.
+                            \n\n7. Ihre Rechte:
+                            \nSie können von dem Verantwortlichen eine Bestätigung darüber verlangen, zu welchem Zweck die personenbezogenen Daten verarbeitet werden.
+                            \n\n8. Recht auf Löschung/Widerrufsrecht:
+                            \nSie können jederzeit Ihre Einwilligung widerrufen und die Applikation über die im Betriebssystem vorgegeben Weise zur Deinstallation vom Gerät entfernen. Damit einhergehend werden Ihre Daten vollständig vom Gerät entfernt.
+                            \n\n9. Recht auf Beschwerde bei einer Aufsichtsbehörde:
+                            Unbeschadet eines anderweitigen verwaltungsrechtlichen oder gerichtlichen Rechtsbehelfs steht Ihnen das Recht auf Beschwerde bei einer Aufsichtsbehörde, insbesondere in dem Mitgliedstaat Ihres Aufenthaltsorts, Ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes, zu, wenn Sie der Ansicht sind, dass die Verarbeitung der Sie betreffenden personenbezogenen Daten gegen die DSGVO verstößt.
+                            Die Aufsichtsbehörde, bei der die Beschwerde eingereicht wurde, unterrichtet den Beschwerdeführer über den Stand und die Ergebnisse der Beschwerde einschließlich der Möglichkeit eines gerichtlichen Rechtsbehelfs nach Art. 78 DSGVO.
+                            \n\nDie vorliegende Datenschutzerklärung ist aktuell gültig und datiert vom 29. Januar 2022.</string>
+
+    <string name="noteRestart">Du kannst die App nun schließen.</string>
+    <string name="dataEstimated">Alle 60 Minuten wird aktualisiert.\n Geschätzte Datennutzung im Monat: 387 MByte</string>
+    <string name="exceptNight">Ausgenommen Nachts. Zwischen 0 und 5 Uhr ist das QIS nicht erreichbar.</string>
 </resources>
