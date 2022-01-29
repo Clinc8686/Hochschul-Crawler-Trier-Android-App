@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.service.notification.StatusBarNotification;
@@ -33,23 +34,19 @@ import java.time.format.DateTimeFormatter;
 
 
 public class Crawler_Service extends BroadcastReceiver {
-    public static String password;
-    public static String username;
-    public static String hochschule;
+    private static String password;
+    private static String username;
+    private static String hochschule;
     private Context context;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         this.context = context;
-        Crawler_Service.password = intent.getExtras().getString("password");
-        Crawler_Service.username = intent.getExtras().getString("username");
-        Crawler_Service.hochschule = intent.getExtras().getString("hochschule");
+        getPreferences();
 
         new Thread(() -> {
             try {
-                Log.e("Crawler_Service", "pruefe NotificationVisibility");
                 if (!isNotificationVisible()) {
-                    Log.e("Crawler_Service", "createNotificationStatus()");
                     createNotificationChannel("Hochschul-Crawler", "", "");
                 }
             } catch (Exception e) {
@@ -57,15 +54,12 @@ public class Crawler_Service extends BroadcastReceiver {
             }
         }).start();
 
-        Log.e("Crawler_Service", "pruefe Zeit");
         LocalDateTime localdatetime = LocalDateTime.now();
         if (!(localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5)) {
             new Thread(() -> {
                 try {
-                    Log.e("Crawler_Service", "login aufruf");
                     createNotificationChannel("Prüfe neue Noten", "", "");
                     HtmlPage grades = loginQIS();
-                    Log.e("Crawler_Service", "checkgrades aufruf");
                     checkGrades(grades);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -73,8 +67,6 @@ public class Crawler_Service extends BroadcastReceiver {
                     closeNotification();
                 }
             }).start();
-        } else {
-            Log.e("HU", "Login between 0 and 5 o'clock");
         }
     }
 
@@ -90,7 +82,6 @@ public class Crawler_Service extends BroadcastReceiver {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setUseInsecureSSL(true);
         webClient.getOptions().setRedirectEnabled(true);
-        Log.e("Crawler_Service", "login1");
 
         HtmlPage qis_login_page = null;
         if(hochschule.equals("checkBoxTrier")) {
@@ -107,10 +98,8 @@ public class Crawler_Service extends BroadcastReceiver {
             //HtmlButton button = null; //= hs_Login.getFirstByXPath("//*[@type='submit']");
             HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
             qis_login_page = button.click();
-            Log.e("Crawler_Service", "login2");
         } else if (hochschule.equals("checkBoxAachen")) {
             qis_login_page = webClient.getPage("https://www.qis.fh-aachen.de/");
-            Log.e("Aachen", qis_login_page.asText());
         } else if (hochschule.equals("checkBoxKoblenz")) {
             qis_login_page = webClient.getPage("https://qisserver.hs-koblenz.de/");
         }
@@ -125,15 +114,12 @@ public class Crawler_Service extends BroadcastReceiver {
         HtmlButton qis_login_button = null;
         HtmlSubmitInput qis_login_submitbutton = null;
         if ((boolean) qis_login_form.getFirstByXPath(("count(//button[@type='submit']) > 0"))) {
-            Log.e("xpath", "1.2");
             qis_login_button = qis_login_form.getFirstByXPath("//button[@type='submit']");
             qis_homepage = qis_login_button.click();
         } else if ((boolean) qis_login_form.getFirstByXPath(("count(//button[@type='submit']) > 0"))) {
-            Log.e("xpath", "2.2");
             qis_login_button = qis_login_form.getFirstByXPath("//button[@type='submit']");
             qis_homepage = qis_login_button.click();
         } else if ((boolean) qis_login_form.getFirstByXPath(("count(//*[@type='submit']) > 0"))) {
-            Log.e("xpath", "3.2");
             qis_login_submitbutton = qis_login_form.getFirstByXPath("//*[@type='submit']");
             qis_homepage = qis_login_submitbutton.click();
         }
@@ -142,25 +128,25 @@ public class Crawler_Service extends BroadcastReceiver {
         }
 
         int counter = 0;
-        boolean notenspiegel = true, pruefungsverwaltung = true, leistungen = true, abschluss = true;
+        boolean performanceRecord = true, examinationManagement = true, attainment = true, graduation = true;
         while (counter <= 3 && !qis_homepage.asText().contains("Name des Studierenden")) {
-            if (notenspiegel && ((boolean) qis_homepage.getFirstByXPath("count(//a[starts-with(@href, 'https://qis.hochschule-trier.de') and text()='Notenspiegel']) > 0"))) {
+            if (performanceRecord && ((boolean) qis_homepage.getFirstByXPath("count(//a[starts-with(@href, 'https://qis.hochschule-trier.de') and text()='Notenspiegel']) > 0"))) {
                 //HtmlAnchor x = qis_homepage.getAnchorByText("Notenspiegel");
                 HtmlAnchor x = qis_homepage.getFirstByXPath("//a[starts-with(@href, 'https://qis.hochschule-trier.de') and text()='Notenspiegel']");
                 qis_homepage = x.click();
-                notenspiegel = false;
+                performanceRecord = false;
             } else if ((boolean) qis_homepage.getFirstByXPath("count(//a[starts-with(@href, 'https://qis.hochschule-trier.de') and starts-with (@title, 'Leistungen für')]) > 0")) {
                 HtmlAnchor x = qis_homepage.getFirstByXPath("//a[starts-with(@href, 'https://qis.hochschule-trier.de') and starts-with (@title, 'Leistungen für')]");
                 qis_homepage = x.click();
-                pruefungsverwaltung = false;
-            } else if (leistungen && (pruefungsverwaltung && ((boolean) qis_homepage.getFirstByXPath("count(//a[starts-with(@class, 'regular') and contains(text(),'Abschluss')]) > 0")))) {
+                examinationManagement = false;
+            } else if (attainment && (examinationManagement && ((boolean) qis_homepage.getFirstByXPath("count(//a[starts-with(@class, 'regular') and contains(text(),'Abschluss')]) > 0")))) {
                 HtmlAnchor x = qis_homepage.getFirstByXPath("//a[starts-with(@class, 'regular') and contains(text(),'Abschluss')]");
                 qis_homepage = x.click();
-                leistungen = false;
-            } else if (abschluss && (qis_homepage.asText().contains("Prüfungsverwaltung"))) {
+                attainment = false;
+            } else if (graduation && (qis_homepage.asText().contains("Prüfungsverwaltung"))) {
                 HtmlAnchor x = qis_homepage.getAnchorByText("Prüfungsverwaltung");
                 qis_homepage = x.click();
-                abschluss = false;
+                graduation = false;
             }
             counter++;
         } if (qis_homepage.asText().contains("Name des Studierenden")) {
@@ -168,47 +154,37 @@ public class Crawler_Service extends BroadcastReceiver {
         } else {
             throw new Exception("konnte keinem Link folgen");
         }
-        Log.e("Crawler_Service", "login3");
 
         webClient.close();
         return grades;
     }
 
-    public void checkGrades(HtmlPage grades) throws Exception {
-        Log.e("Crawler_Service", "checke jetzt die grades");
-        String grade_page_s = grades.asText();
-        BufferedReader reader = new BufferedReader(new StringReader(grade_page_s));
-        //Intent i = new Intent(this, Crawler_Service.class);
+    private void checkGrades(HtmlPage grades) throws Exception {
+        String gradePageString = grades.asText();
+        BufferedReader reader = new BufferedReader(new StringReader(gradePageString));
 
-        Log.e("Crawler_Service", "jetzt parsen");
         int year = Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("yy")));
         String semester;
         if (LocalDate.now().getMonthValue() >= 10 || LocalDate.now().getMonthValue() <= 4) {
-            Log.e("Crawler_Service", "1.if true");
             if(LocalDate.now().getMonthValue() >= 10 && LocalDate.now().getMonthValue() <= 12) {
-                Log.e("Crawler_Service", "2.if true");
                 semester = "WiSe " + year + "/" + (year+1);
             } else {
-                Log.e("Crawler_Service", "2.if false");
                 semester = "WiSe " + (year-1) + "/" + year;
             }
         } else {
-            Log.e("Crawler_Service", "1.if false");
             semester = "SoSe " + year;
         }
 
-        String s;
+        String stringLine;
         String mod = "";
 
-        Log.e("Crawler_Service", "ich while");
-        while ((s = reader.readLine()) != null) {
-            if(((s.contains("BE") || s.contains("NB") || s.contains("NE")) && s.contains(semester)) && (!(mod.contains("PV") || mod.contains("Studienleistung")))) {
-                Log.e("Crawler_Service", "whileif true");
+        while ((stringLine = reader.readLine()) != null) {
+            if(((stringLine.contains("BE") || stringLine.contains("NB") || stringLine.contains("NE")) && stringLine.contains(semester)) && (!(mod.contains("PV") || mod.contains("Studienleistung")))) {
                 mod = mod.replace("\t", " ");
                 mod = mod.replace("  ", " ");
 
-                s = s.replace("\t", " ");
-                s = s.replace("  ", " ");
+                stringLine = stringLine.replace("\t", " ");
+                stringLine = stringLine.replace("  ", " ");
                 //String[] s_splitted = s.split("\\s+");
 
                 /*String mod_reg = mod;
@@ -219,18 +195,16 @@ public class Crawler_Service extends BroadcastReceiver {
                 mod_reg = mod_reg.replace("Ö", "OE");
                 mod_reg = mod_reg.replace("Ü", "UE");*/
 
-                Log.e("connectToDatabase", "jopp");
-
                 if (connectToDatabase(semester+"|"+mod)) {
                     createNotificationChannel("Neue Noten", semester, mod);
                 }
             }
-            mod = s;
+            mod = stringLine;
         }
     }
 
-    public void createNotificationChannel(String channel, String semester, String mod) {
-        NotificationChannel NChannel;
+    private void createNotificationChannel(String channel, String semester, String mod) {
+        NotificationChannel notificationChannel;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channel)
                 .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
                 .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
@@ -241,8 +215,8 @@ public class Crawler_Service extends BroadcastReceiver {
 
         switch (channel) {
             case "Hochschul-Crawler":
-                NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
-                manager.createNotificationChannel(NChannel);
+                notificationChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
+                manager.createNotificationChannel(notificationChannel);
 
                 builder.setContentTitle("Hochschul-Crawler-Service")
                         .setContentText("Hochschul-Crawler läuft im Hintergrund.")
@@ -252,8 +226,8 @@ public class Crawler_Service extends BroadcastReceiver {
                 manager.notify(54295, builder.build());
                 break;
             case "Neue Noten":
-                NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_HIGH);
-                manager.createNotificationChannel(NChannel);
+                notificationChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_HIGH);
+                manager.createNotificationChannel(notificationChannel);
 
                 builder.setContentTitle("Hochschul-Crawler")
                         .setContentText("Es sind neue Noten verfügbar!")
@@ -262,8 +236,8 @@ public class Crawler_Service extends BroadcastReceiver {
                 manager.notify(54296, builder.build());
                 break;
             case "Prüfe neue Noten":
-                NChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_LOW);
-                manager.createNotificationChannel(NChannel);
+                notificationChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_LOW);
+                manager.createNotificationChannel(notificationChannel);
 
                 builder.setContentTitle("Hochschul-Crawler-Sync")
                         .setContentText("Prüfe auf neue Noten")
@@ -278,39 +252,48 @@ public class Crawler_Service extends BroadcastReceiver {
     }
 
     private void closeNotification() {
-        Log.e("Beim scalene der Notification:", "ich versuchs");
         try {
-            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.cancel(54297);
-        } catch (Exception e) {
-            Log.e("Beim schließen der Notification:", e.toString());
-        }
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(54297);
+        } catch (Exception ignored) {}
     }
 
     private boolean isNotificationVisible () {
-        boolean laeuft = false;
-        NotificationManager manager = context.getSystemService(NotificationManager.class);
-        StatusBarNotification[] sbn = manager.getActiveNotifications();
-        for (StatusBarNotification x: sbn) {
-            if (x.getNotification().getChannelId().equals("Hochschul-Crawler")) {
-                laeuft = true;
+        boolean isRunning = false;
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        StatusBarNotification[] sbn = notificationManager.getActiveNotifications();
+        for (StatusBarNotification notification: sbn) {
+            if (notification.getNotification().getChannelId().equals("Hochschul-Crawler")) {
+                isRunning = true;
             }
         }
-        return laeuft;
+        return isRunning;
     }
 
-    public boolean connectToDatabase(String sem_mod) {
+    private boolean connectToDatabase(String sem_mod) {
         SQLiteDatabase sqlgrade = context.openOrCreateDatabase("HochschulCrawlerGrades", Context.MODE_PRIVATE,null);
         sqlgrade.execSQL("CREATE TABLE IF NOT EXISTS Grades(ID INTEGER PRIMARY KEY AUTOINCREMENT,SEMMOD TEXT NOT NULL);");
         Cursor resultSet = sqlgrade.rawQuery("Select SEMMOD from Grades WHERE SEMMOD = \'"+sem_mod+"\'",null);
 
         if (!resultSet.moveToFirst()) {
             sqlgrade.execSQL("INSERT INTO Grades (SEMMOD) VALUES(\""+sem_mod+"\");");
-            Log.e("SQL-if", "nix");
             resultSet.close();
             return true;
         }
         resultSet.close();
         return false;
+    }
+
+    private void getPreferences() {
+        SharedPreferences prefs = context.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+        username = prefs.getString("username", "None");//"None" is the default value.
+        password = prefs.getString("password", "None");//"None" is the default value.
+        hochschule = prefs.getString("hochschule", "None");
+    }
+
+    public static void setData(String username, String password, String hochschule) {
+        Crawler_Service.username = username;
+        Crawler_Service.password = password;
+        Crawler_Service.hochschule = hochschule;
     }
 }
