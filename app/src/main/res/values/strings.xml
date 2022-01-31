@@ -3,9 +3,9 @@
     <string name="title_activity_main">Hochschul-Crawler</string>
     <string name="privacypolicy">1. Beschreibung und Umfang der Datenverarbeitung:
                             \nBeim Absenden des nachfolgenden Formulars werden folgende personenbezogene Daten durch die Applikation erhoben und abgespeichert:
-                            \n● Rechenzentrums-/Fachhochschulkennung
-                            \n● Das zugehörige Passwort
-                            \n● Belegte und absolvierte Modulfächer an der Hochschule
+                            \n• Rechenzentrums-/Fachhochschulkennung
+                            \n• Das zugehörige Passwort
+                            \n• Belegte und absolvierte Modulfächer an der Hochschule
                             \n\n2. Zweck der Datenverarbeitung:
                             \nDie vorübergehende Speicherung der unter 1. genannten Daten dient dem Zweck der Übermittlung an die Hochschule, sich dort anzumelden und die eigenen Leistungen auszuwerten.
                             \n\n3. Dauer der Speicherung:
@@ -30,5 +30,5 @@
 
     <string name="noteRestart">Du kannst die App nun schließen.</string>
     <string name="dataEstimated">Alle 60 Minuten wird aktualisiert.\n Geschätzte Datennutzung im Monat: 387 MByte</string>
-    <string name="exceptNight">Ausgenommen Nachts. Zwischen 0 und 5 Uhr ist das QIS nicht erreichbar.</string>
+    <string name="exceptNight">Ausgenommen Nachts. Zwischen 0 und 6 Uhr ist das QIS nicht erreichbar.</string>
 </resources>
