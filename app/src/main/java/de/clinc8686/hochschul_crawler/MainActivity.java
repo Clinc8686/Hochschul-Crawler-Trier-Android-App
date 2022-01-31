@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     LocalDateTime localdatetime = LocalDateTime.now();
                     if (localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5) {
-                         createToastMessage("Login failed: QIS zwischen 0 und 5 Uhr nicht erreichbar!");
+                         createToastMessage("Login failed: QIS zwischen 0 und 6 Uhr nicht erreichbar!");
 
                         runOnUiThread(() -> {
                             loginfailed();
