@@ -37,6 +37,7 @@ dependencies {
 
     // Without httpmime, we need to specify logger + codec explicitly
     // Yes, I know there is an error, but whatever, it works
+    //noinspection DuplicatePlatformClasses
     implementation group: 'commons-logging', name: 'commons-logging', version: '1.2'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
 
