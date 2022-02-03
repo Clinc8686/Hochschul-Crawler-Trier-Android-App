@@ -21,11 +21,12 @@
         <activity
             android:name="de.clinc8686.hochschul_crawler.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:exported="true"
-            tools:ignore="WrongManifestParent">
+            tools:ignore="WrongManifestParent"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -36,7 +37,7 @@
             android:enabled="true"
             android:label="Hochschul-Crawler"
             android:permission="android.permission.BIND_JOB_SERVICE"
-            tools:ignore="MissingClass,WrongManifestParent" />
+            tools:ignore="Instantiatable,MissingClass,WrongManifestParent" />
 
         <receiver android:name=".BootCompletedReceiver"
             android:exported="false">
