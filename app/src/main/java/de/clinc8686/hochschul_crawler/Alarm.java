@@ -36,7 +36,7 @@ public class Alarm {
 
     public static void stopAlarm(Context context) {
         Intent intent = new Intent(context, Crawler_Service.class).setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent sender = PendingIntent.getBroadcast(context, 8686, intent, 0);
+        PendingIntent sender = PendingIntent.getBroadcast(context, 8686, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
         sender.cancel();
