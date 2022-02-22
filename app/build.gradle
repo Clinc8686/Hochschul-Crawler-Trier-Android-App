@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 repositories {
-    maven { url "https://dl.bintray.com/null-dev/maven" }
+    maven { url "https://maven.google.com" }
 }
 
 android {
     buildToolsVersion '31.0.0'
     compileSdkVersion 30
     defaultConfig {
-        //applicationId "xyz.nulldev.htmlunitandroidtest"
         applicationId "de.clinc8686.hochschul_crawler"
         minSdkVersion 26
         targetSdkVersion 30
@@ -19,8 +18,10 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled  false
+            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -55,7 +56,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    //implementation 'androidx.appcompat:appcompat:1.1.0'
+    //implementation 'androidx.appcompat:appcompat:1.4.1'
     testImplementation 'junit:junit:4.12'
     //noinspection GradleCompatible
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
