@@ -79,7 +79,7 @@ import java.time.format.DateTimeFormatter;
                     Database database = new Database(context);
                     boolean newgrades = database.insertData(sem, modNum, modul, pass, grade, context);
                     if (newgrades && !firstlogin) {
-                        new Notification(context,context.getString(R.string.neueNoten), semester, modNum + " " + modul);
+                        new Notification(context,"Neue Noten", semester, modNum + " " + modul);
                     }
                 }
                 mod = stringLine;

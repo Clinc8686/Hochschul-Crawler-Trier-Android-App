@@ -55,6 +55,7 @@ public class GradeFragment extends Fragment {
         this.height = size.y;
 
         ((TextView) view.findViewById(R.id.swipeleft)).setTextSize(width/80.f);
+        ((TextView) view.findViewById(R.id.noGrades)).setTextSize(width/46.f);
         SearchView searchView = view.findViewById(R.id.searchBar);
 
         LinearLayout linearLayout1 = (LinearLayout) searchView.getChildAt(0);

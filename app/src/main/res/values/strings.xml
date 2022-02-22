@@ -29,33 +29,44 @@
                             Die Aufsichtsbehörde, bei der die Beschwerde eingereicht wurde, unterrichtet den Beschwerdeführer über den Stand und die Ergebnisse der Beschwerde einschließlich der Möglichkeit eines gerichtlichen Rechtsbehelfs nach Art. 78 DSGVO.
                             \n\nDie vorliegende Datenschutzerklärung ist aktuell gültig und datiert vom 29. Januar 2022.</string>
 
-    <string name="noteRestart">Du kannst die App nun schließen.</string>
-    <string name="dataEstimated">Alle 60 Minuten wird aktualisiert.\n Geschätzte Datennutzung im Monat: 387 MByte</string>
-    <string name="exceptNight">Ausgenommen Nachts. Zwischen 1 und 6 Uhr ist das QIS nicht erreichbar.</string>
-    <string name="license">Änderungen an HtmlUnit lizenziert mit Apache License Version 2.0. Shim code ist unter GNU GPL v2 lizenziert. <a href='https://github.com/Clinc8686/Hochschul-Crawler-Trier-Android-App'>click!</a></string>
+    <string name="noteRestart">Now you can close the app.</string>
+    <string name="dataEstimated">Every 60 minutes will be checked.\n Estimated data usage per month: 387 MByte</string>
+    <string name="exceptNight">Except at night. Between 1 a.m. and 6 a.m is the QIS not reachable.</string>
+    <string name="license">Changes on HtmlUnit licensed under Apache License Version 2.0. Shim code is under GNU GPL v2 licensed. <a href='https://github.com/Clinc8686/Hochschul-Crawler-Trier-Android-App'>click!</a></string>
     <string name="NotificationTitleService">QIS Hochschul Crawler Service</string>
-    <string name="NotificationTextService">QIS Hochschul Crawler läuft im Hintergrund.</string>
+    <string name="NotificationTextService">QIS Hochschul Crawler runs in background.</string>
     <string name="headerPrivacypolicy"><![CDATA[Datenschutzerklärung & Einwilligung zur Verarbeitung personenbezogener Daten]]></string>
     <string name="login_page_header">QIS Hochschul Crawler</string>
-    <string name="benutzerkennung">Benutzerkennung</string>
-    <string name="passwort">Passwort</string>
-    <string name="login">Anmelden</string>
-    <string name="logout">Abmelden</string>
-    <string name="logged_in">Angemeldet</string>
-    <string name="not_logged_in">Nicht angemeldet</string>
-    <string name="aktualisierungsintervall_waehlen">Wähle hier das Aktualisierungsintervall aus</string>
-    <string name="LoginSeconds">Der Anmeldeprozess kann je nach Internetverbindung bis zu 30 Sekunden dauern.</string>
-    <string name="SwipeRight">Swipe nach rechts um deine Noten einzusehen.</string>
-    <string name="rebootAppSeeGrades">1. Anmelden \n2. App neu starten\n3. Hier deine Noten einsehen</string>
-    <string name="SwipeLeft">Swipe nach links um dich an- oder abzumelden.</string>
-    <string name="LoginFailedTooManyFalse">Anmeldung fehlgeschlagen! Zu oft falscher Benutzername/Passwort eingegeben! Deine IP-Adresse ist für einige Minuten gesperrt.</string>
-    <string name="LoginFailedWrong">Anmeldung fehlgeschlagen! Benutzerkennung/Passwort falsch oder keine/schlechte Verbidung zum QIS!</string>
-    <string name="benutzerkennungForm">Benutzerkennung</string>
+    <string name="benutzerkennung">Username</string>
+    <string name="passwort">Password</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="logged_in">Logged in</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="aktualisierungsintervall_waehlen">Choose the update interval</string>
+    <string name="LoginSeconds">Dependig on your internet connection, the login process can take up to 30 seconds.</string>
+    <string name="SwipeRight">Swipe to the right to see your grades.</string>
+    <string name="rebootAppSeeGrades">1. Login \n2. Restart application\n3. See here your grades</string>
+    <string name="SwipeLeft">Swipe to the left to login or logout.</string>
+    <string name="LoginFailedTooManyFalse">Login failed! Too many login tries with wrong username/password! Your IP-Address is for a few minutes blocked.</string>
+    <string name="LoginFailedWrong">Login failed! username/password wrong or no/unstable connection to the QIS!</string>
+    <string name="benutzerkennungForm">Username</string>
     <string name="hrzloginForm">HRZ-Login</string>
-    <string name="FHKennungForm">FH-Kennung</string>
-    <string name="neueNoten">Neue Noten</string>
-    <string name="hinweis">Hinweis!</string>
-    <string name="hinweisBerechtigung">Ohne die folgende Berechtigung kann die App nicht optimal im Hintergrund funktionieren.</string>
+    <string name="FHKennungForm">FH-Identifier</string>
+    <string name="hinweis">Hint!</string>
+    <string name="hinweisBerechtigung">Without the following permission, the application cannot run in an optimum way in the background.</string>
     <string name="agreement">Ich willige diesem ein</string>
     <string name="decline">Ich lehne ab</string>
+    <string name="usernameOrPasswdEmpty">Username or password empty!</string>
+    <string name="LoginFailedInNight">Login failed: Between 1 a.m. and 6 a.m is the QIS not reachable!</string>
+    <string name="StoppedService"><![CDATA[Service was stopped and user data deleted.]]></string>
+    <string name="All">Every </string>
+    <string name="MinutesToUpdate"> minutes will be checked.\n</string>
+    <string name="EstimatedUsage">Estimated data usage per month: </string>
+    <string name="SearchingTesters">We are searching for testers from other universities! Contact us at hochschulcrawler@gmail.com</string>
+    <string name="NewGrades">Es sind neue Noten verfügbar!</string>
+    <string name="NewGradesFor">New grades for </string>
+    <string name="in"> in </string>
+    <string name="available"> available!</string>
+    <string name="CheckForGrades">Checking for new grades.</string>
 </resources>

@@ -45,8 +45,8 @@ public class Notification {
                 manager.createNotificationChannel(notificationChannel);
 
                 builder.setContentTitle("QIS Hochschul Crawler")
-                        .setContentText("Es sind neue Noten verfügbar!")
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
+                        .setContentText(context.getString(R.string.NewGrades))
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.NewGradesFor) + semester + context.getString(R.string.in) + mod + context.getString(R.string.available)));
 
                 manager.notify(54296, builder.build());
                 break;
@@ -55,7 +55,7 @@ public class Notification {
                 notificationChannel.setShowBadge(false);
                 manager.createNotificationChannel(notificationChannel);
 
-                builder.setContentTitle("Prüfe auf neue Noten")
+                builder.setContentTitle(context.getString(R.string.CheckForGrades))
                         .setProgress(0, 0, true);
 
                 manager.notify(54297, builder.build());

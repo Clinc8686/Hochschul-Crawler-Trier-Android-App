@@ -67,8 +67,8 @@ public class HomeFragment extends Fragment {
             Login.loginsuccess(view, getActivity());
             SharedPreferences prefs = (getContext().getSharedPreferences((getContext().getResources().getString(R.string.app_name)), Context.MODE_PRIVATE));
             HomeFragment.value = prefs.getInt("interval", 0);
-            text_seekbar_minute.setText("Alle " + HomeFragment.value + " Minuten wird aktualisiert.\n" +
-                    "Geschätzte Datennutzung im Monat: \n" + dataUsage());
+            text_seekbar_minute.setText(getString(R.string.All) + HomeFragment.value + getString(R.string.MinutesToUpdate) +
+                    getString(R.string.EstimatedUsage) + dataUsage());
         }
 
         if (!loginsucess) {
@@ -103,12 +103,12 @@ public class HomeFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             if (!HomeFragment.loginsucess) {
                 if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
-                    new Message(getContext(), "Benutzerkennung oder Passwort leer!");
+                    new Message(getContext(), getString(R.string.usernameOrPasswdEmpty));
                     loginfailed();
                 } else {
                     LocalDateTime localdatetime = LocalDateTime.now();
                     if (localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5) {
-                        new Message(getContext(), "Login failed: QIS zwischen 0 und 6 Uhr nicht erreichbar!");
+                        new Message(getContext(), getString(R.string.LoginFailedInNight));
                         loginfailed();
                     } else {
                         if (!Alarm.checkIntent(getActivity())) {
@@ -147,7 +147,7 @@ public class HomeFragment extends Fragment {
                 database.dropTable();
                 SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getApplicationContext().getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
                 prefs.edit().clear().apply();
-                new Message(getContext(), "Service wurde gestoppt & Logindaten entfernt.");
+                new Message(getContext(), getString(R.string.StoppedService));
             }
         });
 
@@ -159,8 +159,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progessValue, boolean b) {
                 HomeFragment.value = progessValue;
-                text_seekbar_minute.setText("Alle " + HomeFragment.value + " Minuten wird aktualisiert.\n" +
-                        "Geschätzte Datennutzung im Monat: " + dataUsage());
+                text_seekbar_minute.setText(getString(R.string.All) + HomeFragment.value + getString(R.string.MinutesToUpdate) +
+                        getString(R.string.EstimatedUsage) + dataUsage());
             }
 
             @Override
@@ -170,8 +170,8 @@ public class HomeFragment extends Fragment {
             @SuppressLint("SetTextI18n")
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                text_seekbar_minute.setText("Alle " + HomeFragment.value + " Minuten wird aktualisiert.\n" +
-                        "Geschätzte Datennutzung im Monat: " + dataUsage());
+                text_seekbar_minute.setText(getString(R.string.All) + HomeFragment.value + getString(R.string.MinutesToUpdate) +
+                        getString(R.string.EstimatedUsage) + dataUsage());
             }
         });
 
@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment {
                         checkbox = "checkBoxKoblenz";
 
                         //tmp
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),"Es werden noch Tester für andere Hochschulen gesucht! Melde dich bei: hochschulcrawler@gmail.com"));
+                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
                         RadioButton rb = getActivity().findViewById(R.id.radioButtonTrier);
                         rb.setChecked(true);
                         break;
@@ -201,7 +201,7 @@ public class HomeFragment extends Fragment {
                         checkbox = "checkBoxAachen";
 
                         //tmp
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),"Es werden noch Tester für andere Hochschulen gesucht! Melde dich bei: hochschulcrawler@gmail.com"));
+                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
                         RadioButton rb2 = getActivity().findViewById(R.id.radioButtonTrier);
                         rb2.setChecked(true);
                         break;
