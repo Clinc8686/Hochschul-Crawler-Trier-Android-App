@@ -43,59 +43,60 @@ public class Login {
 
     static void loginsuccess(View view, Activity activitiy) {
         activitiy.runOnUiThread(new Runnable() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void run() {
                 TextView loggingstatus_text = view.findViewById(R.id.loggingstatus_text);
                 loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 loggingstatus_text.setTextColor(Color.GREEN);
-                loggingstatus_text.setText("Logged in");
+                loggingstatus_text.setText(R.string.logged_in);
 
                 TextView appCloseText = view.findViewById(R.id.appCloseText);
                 appCloseText.setVisibility(View.VISIBLE);
 
                 view.findViewById(R.id.progressBarLogin).setVisibility(View.GONE);
                 view.findViewById(R.id.radioGroup).setVisibility(View.GONE);
+                view.findViewById(R.id.seekBar).setVisibility(View.GONE);
+                view.findViewById(R.id.intervall_text).setVisibility(View.GONE);
+                view.findViewById(R.id.loginHint).setVisibility(View.INVISIBLE);
 
                 HomeFragment.loginsucess = true;
                 Button btn_login = view.findViewById(R.id.btn_login);
-                btn_login.setText("Logout");
-
-
+                btn_login.setText(R.string.logout);
             }});
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     public HtmlPage loginQIS() throws Exception {
+        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(java.util.logging.Level.OFF);
         HtmlPage grades;
 
-        WebClient webClient = new WebClient();
-        webClient.getOptions().setTimeout(30000);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setJavaScriptEnabled(true);
-        webClient.getOptions().setUseInsecureSSL(true);
-        webClient.getOptions().setRedirectEnabled(true);
+        WebClient webClient = createWebClient();
         HtmlPage qis_login_page = null;
-        if (hochschule.equals("checkBoxTrier")) {
-            HtmlPage hs_Login = webClient.getPage("https://qis.hochschule-trier.de/qisserver/rds?state=user&type=0&category=menu.browse&startpage=portal.vm");
-            if (hs_Login.asText().contains("gesperrt")) {
-                webClient.close();
-                throw new TooManyFalseLoginException("gesperrt");
-            }
-            HtmlForm hs_login_form = hs_Login.getFormByName("login");
-            HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
-            HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
-            hs_login_username.setValueAttribute(username);
-            hs_login_password.setValueAttribute(password);
-            //HtmlButton button = null; //= hs_Login.getFirstByXPath("//*[@type='submit']");
-            HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
-            qis_login_page = button.click();
-        } else if (hochschule.equals("checkBoxAachen")) {
-            qis_login_page = webClient.getPage("https://www.qis.fh-aachen.de/");
-        } else if (hochschule.equals("checkBoxKoblenz")) {
-            qis_login_page = webClient.getPage("https://qisserver.hs-koblenz.de/");
+        switch (hochschule) {
+            case "checkBoxTrier":
+                HtmlPage hs_Login = webClient.getPage("https://qis.hochschule-trier.de/qisserver/rds?state=user&type=0&category=menu.browse&startpage=portal.vm");
+                if (hs_Login.asText().contains("gesperrt")) {
+                    webClient.close();
+                    throw new TooManyFalseLoginException("gesperrt");
+                }
+                HtmlForm hs_login_form = hs_Login.getFormByName("login");
+                HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
+                HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
+                hs_login_username.setValueAttribute(username);
+                hs_login_password.setValueAttribute(password);
+                //HtmlButton button = null; //= hs_Login.getFirstByXPath("//*[@type='submit']");
+                HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
+                qis_login_page = button.click();
+                break;
+            case "checkBoxAachen":
+                qis_login_page = webClient.getPage("https://www.qis.fh-aachen.de/");
+                break;
+            case "checkBoxKoblenz":
+                qis_login_page = webClient.getPage("https://qisserver.hs-koblenz.de/");
+                break;
         }
+
         HtmlPage qis_homepage = null;
         HtmlForm qis_login_form = qis_login_page.getFormByName("loginform");
         HtmlTextInput qis_login_username = qis_login_form.getInputByName("asdf");
@@ -149,5 +150,19 @@ public class Login {
 
         webClient.close();
         return grades;
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private WebClient createWebClient() {
+        WebClient webClient = new WebClient();
+        webClient.getOptions().setTimeout(30000);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
+        webClient.getOptions().setRedirectEnabled(true);
+        webClient.waitForBackgroundJavaScript(5000);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        return webClient;
     }
 }

@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import java.io.BufferedReader;
@@ -24,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 
             new Thread(() -> {
                 if (!Notification.isNotificationVisible(context.getApplicationContext())) {
-                    new Notification(context.getApplicationContext(), "Hochschul-Crawler", "", "");
+                    new Notification(context.getApplicationContext(), "Hochschul Crawler", "", "");
                 }
             }).start();
 
@@ -71,22 +70,24 @@ import java.time.format.DateTimeFormatter;
 
             while ((stringLine = reader.readLine()) != null) {
                 if ((((stringLine.contains("BE") || stringLine.contains("NB")) || stringLine.contains("NE")) && (!(mod.contains("PV") || mod.contains("Studienleistung") || stringLine.contains("Modul:"))) && (stringLine.contains("WiSe") || stringLine.contains("SoSe")))) {
-                    //Log.e("xx",  mod + "\n" + stringLine);
-                    sem = stringLine.replaceAll("\\s+", " ").split(" ")[1] + " " + stringLine.replaceAll("\\s+", " ").split(" ")[2];
-                    grade = stringLine.replaceAll("\\s+", " ").split(" ")[3];
-                    pass = stringLine.replaceAll("\\s+", " ").split(" ")[4];
+                    sem = replaceAndSplitWhitespaces(stringLine,1) + " " + replaceAndSplitWhitespaces(stringLine, 2);
+                    grade = replaceAndSplitWhitespaces(stringLine,3);
+                    pass = replaceAndSplitWhitespaces(stringLine, 4);
                     modul = mod.replaceAll("\\s+", " ").substring(mod.indexOf(" ") + 1);
-                    modNum = mod.replaceAll("\\s+", " ").split(" ")[0];
-                    Log.e("aa", mod + "\n" + stringLine + "\n" + modNum + modul + sem + grade + pass);
+                    modNum = replaceAndSplitWhitespaces(mod, 0);
 
                     Database database = new Database(context);
                     boolean newgrades = database.insertData(sem, modNum, modul, pass, grade, context);
                     if (newgrades && !firstlogin) {
-                        new Notification(context,"Neue Noten", semester, modNum + " " + modul);
+                        new Notification(context,context.getString(R.string.neueNoten), semester, modNum + " " + modul);
                     }
                 }
                 mod = stringLine;
             }
+        }
+
+        private static String replaceAndSplitWhitespaces(String StringToModify, int position) {
+            return StringToModify.replaceAll("\\s+", " ").split(" ")[position];
         }
 
         private void getPreferences(Context context) {

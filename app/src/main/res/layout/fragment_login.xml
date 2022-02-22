@@ -14,12 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:height="70dp"
         android:gravity="center_vertical"
-        android:text="Noten Crawler"
+        android:text="@string/login_page_header"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
-        android:textSize="23sp"
         tools:ignore="RtlCompat" />
 
     <EditText
@@ -27,12 +25,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:width="250dp"
-        android:height="50dp"
         android:background="@drawable/inputfield"
         android:gravity="center_vertical"
-        android:hint="Benutzerkennung"
-        android:maxLength="15"
+        android:hint="@string/benutzerkennung"
+        android:maxLength="25"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -41,13 +37,12 @@
     <EditText
         android:id="@+id/et_password"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:width="250dp"
         android:gravity="center_vertical"
         android:maxLength="25"
         android:background="@drawable/inputfield"
-        android:hint="Passwort"
+        android:hint="@string/passwort"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
@@ -60,10 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:width="250dp"
         android:background="@drawable/rounded_corner"
         android:enabled="true"
-        android:text="Login"
+        android:text="@string/login"
         android:backgroundTint="#FF5722"
         android:textColor="#FFFFFF" />
 
@@ -78,8 +72,8 @@
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_marginTop="20dp"
-        android:layout_width="300dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
         <RadioButton android:id="@+id/radioButtonTrier"
             android:layout_width="wrap_content"
@@ -116,8 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:textSize="17sp"
-        android:text="Not logged in"
+        android:text="@string/not_logged_in"
         android:textColor="#FF0000" />
 
     <TextView
@@ -126,33 +119,39 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="Wähle hier das Aktualisierungsintervall aus"
+        android:text="@string/aktualisierungsintervall_waehlen"
         android:textColor="#FFFFFF" />
 
     <SeekBar
         android:id="@+id/seekBar"
         android:splitTrack="false"
-        android:layout_width="250dp"
-        android:layout_height="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:backgroundTint="#FFF"
-        android:thumbTint="#FF5722"
         android:thumb="@drawable/thumb"
-        android:background="@drawable/rounded_corner"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
         android:min="15"
         android:progress="60"
         android:max="60"
-        android:scaleY="5.5"
-        android:paddingLeft="6dp"
-        android:paddingRight="6dp"
-        android:thumbOffset="8dp"
         android:progressDrawable="@drawable/seekbar_thumb"
         />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:id="@+id/loginHint"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:text="@string/LoginSeconds"/>
+
+    <TextView
         android:id="@+id/text_seekbar_minute"
         android:text="@string/dataEstimated"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
@@ -162,52 +161,41 @@
     <TextView
         android:id="@+id/text_qis_abschaltung"
         android:text="@string/exceptNight"
-        android:layout_width="250dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
         android:layout_marginTop="10dp"
         android:textColor="#9CFFFFFF" />
 
-    <!--<Switch
-        android:id="@+id/gradeswitch"
-        android:layout_width="270dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:textColor="#FFFFFF"
-        android:checked="false"
-        android:showText="true"
-        android:thumb="@drawable/gradeswitch"
-        android:switchMinWidth="40dp"
-        android:switchPadding="10dp"
-        android:backgroundTint="#fff"
-        android:text="Ich möchte direkt über meine Noten benachrichtigt werden:"
-        android:textOff="nein"
-        android:textOn="ja"
-
-        />-->
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:scaleType="fitEnd"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:gravity="bottom"
         android:layout_marginBottom="10dp">
 
-        <Button
-            android:layout_height="20dp"
-            android:layout_width="20dp"
-            android:background="@drawable/filledcircle"
-            android:layout_marginRight="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:textColor="#68FFFFFF"
+            android:text="@string/license"
+            android:id="@+id/license"
+            android:layout_marginBottom="10dp"/>
 
-        <Button
-            android:layout_height="20dp"
-            android:layout_width="20dp"
-            android:id="@+id/rightFragmentButton"
-            android:background="@drawable/emptycircle" />
+        <TextView
+            android:id="@+id/swiperight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/SwipeRight"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"/>
     </LinearLayout>
 
 </LinearLayout>

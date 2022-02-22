@@ -25,11 +25,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void setViewPagerAdapter() {
         ViewPageAdapter viewPageAdapter = new ViewPageAdapter(this);
-        ArrayList<Fragment> fragmentList = new ArrayList<>(); //creates an ArrayList of Fragments
+        ArrayList<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(new HomeFragment());
         fragmentList.add(new GradeFragment());
 
-        viewPageAdapter.setData(fragmentList); //sets the data for the adapter
+        viewPageAdapter.setData(fragmentList);
         viewPager.setAdapter(viewPageAdapter);
     }
 

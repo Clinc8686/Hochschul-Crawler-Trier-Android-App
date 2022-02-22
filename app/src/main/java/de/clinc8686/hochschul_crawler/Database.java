@@ -4,14 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-public class Database extends SQLiteOpenHelper {
+public class Database {
     private SQLiteDatabase sqlgrade;
     Database(Context context) {
-        super(context, "Grades", null, 1);
         this.sqlgrade = (context.getApplicationContext().openOrCreateDatabase("HochschulCrawlerGrades", Context.MODE_PRIVATE, null));
     }
 
@@ -29,15 +27,21 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public ArrayList<ModulInfo> selectData(Context context) {
-        //SQLiteDatabase db = (context.getApplicationContext().openOrCreateDatabase("HochschulCrawlerGrades", Context.MODE_PRIVATE, null));
         ArrayList<ModulInfo> arraylist = new ArrayList<ModulInfo>();
         @SuppressLint("Recycle")
-        Cursor cursor = sqlgrade.rawQuery( "SELECT * FROM Grades", null );
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            arraylist.add(new ModulInfo(cursor.getString(1), cursor.getString(2), cursor.getString(3),  cursor.getString(4), cursor.getString(5)));
-            //array_list.add(cursor.getString(cursor.getColumnIndex("SEMMOD")));
-            cursor.moveToNext();
+        Cursor cursor = sqlgrade.rawQuery( "SELECT * FROM Grades;", null );
+        if(cursor!=null && cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    arraylist.add(new ModulInfo(cursor.getString(cursor.getColumnIndex("SEMESTER")),
+                            cursor.getString(cursor.getColumnIndex("MODULNUMBER")),
+                            cursor.getString(cursor.getColumnIndex("MODUL")),
+                            cursor.getString(cursor.getColumnIndex("PASS")),
+                            cursor.getString(cursor.getColumnIndex("GRADE"))));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+
         }
         return arraylist;
     }
@@ -45,27 +49,4 @@ public class Database extends SQLiteOpenHelper {
     public void dropTable()  {
         sqlgrade.execSQL("DROP TABLE IF EXISTS Grades");
     }
-
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
-    }
-
-    /*private boolean connectToDatabase(String sem_mod, Context context) {
-        sqlgrade.execSQL("CREATE TABLE IF NOT EXISTS Grades(ID INTEGER PRIMARY KEY AUTOINCREMENT,SEMMOD TEXT NOT NULL);");
-        Cursor resultSet = sqlgrade.rawQuery("Select SEMMOD from Grades WHERE SEMMOD = \'" + sem_mod + "\'", null);
-
-        if (!resultSet.moveToFirst()) {
-            sqlgrade.execSQL("INSERT INTO Grades (SEMMOD) VALUES(\"" + sem_mod + "\");");
-            resultSet.close();
-            return true;
-        }
-        resultSet.close();
-        return false;
-    }*/
 }

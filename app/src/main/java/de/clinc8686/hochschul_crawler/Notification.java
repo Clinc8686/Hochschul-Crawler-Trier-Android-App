@@ -20,7 +20,7 @@ public class Notification {
 
         NotificationChannel notificationChannel;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context.getApplicationContext(), channel)
-                .setSmallIcon(R.mipmap.hochschulcrawlerlogoicon)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentIntent(PendingIntent.getActivity(this.context, 0, new Intent(this.context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
@@ -28,14 +28,15 @@ public class Notification {
         NotificationManager manager = (context.getApplicationContext().getSystemService(NotificationManager.class));
 
         switch (channel) {
-            case "Hochschul-Crawler":
+            case "Hochschul Crawler":
                 notificationChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setShowBadge(false);
                 manager.createNotificationChannel(notificationChannel);
 
-                builder.setContentTitle("Hochschul-Crawler-Service")
-                        .setContentText("Hochschul-Crawler läuft im Hintergrund.")
-                        .setOngoing(true)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Hochschul-Crawler läuft im Hintergrund."));
+                builder.setContentTitle(context.getString(R.string.NotificationTitleService))
+                        .setContentText(context.getString(R.string.NotificationTextService))
+                        .setOngoing(true);
+                        //.setStyle(new NotificationCompat.BigTextStyle().bigText("QIS Hochschul Crawler läuft im Hintergrund."));
 
                 manager.notify(54295, builder.build());
                 break;
@@ -43,7 +44,7 @@ public class Notification {
                 notificationChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_HIGH);
                 manager.createNotificationChannel(notificationChannel);
 
-                builder.setContentTitle("Hochschul-Crawler")
+                builder.setContentTitle("QIS Hochschul Crawler")
                         .setContentText("Es sind neue Noten verfügbar!")
                         .setStyle(new NotificationCompat.BigTextStyle().bigText("Es sind neue Noten für das " + semester + " in " + mod + " verfügbar!"));
 
@@ -51,12 +52,11 @@ public class Notification {
                 break;
             case "Prüfe neue Noten":
                 notificationChannel = new NotificationChannel(channel, channel, NotificationManager.IMPORTANCE_LOW);
+                notificationChannel.setShowBadge(false);
                 manager.createNotificationChannel(notificationChannel);
 
-                builder.setContentTitle("Hochschul-Crawler-Sync")
-                        .setContentText("Prüfe auf neue Noten")
-                        .setProgress(0, 0, true)
-                        .setAutoCancel(true);
+                builder.setContentTitle("Prüfe auf neue Noten")
+                        .setProgress(0, 0, true);
 
                 manager.notify(54297, builder.build());
                 break;

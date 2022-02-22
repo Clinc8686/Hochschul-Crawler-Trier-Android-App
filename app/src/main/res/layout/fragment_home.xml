@@ -9,13 +9,6 @@
     tools:context=".MainActivity"
     android:background="@drawable/petrisberg_image">
 
-    <!--<com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:background="#E0E69D" />-->
-    <!--app:layout_constraintTop_toTopOf="parent"-->
-
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
         android:layout_width="match_parent"

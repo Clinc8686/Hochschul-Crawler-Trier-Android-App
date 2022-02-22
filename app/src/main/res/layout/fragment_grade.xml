@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/gradeLayout"
     tools:context=".GradeFragment"
-    android:orientation="vertical"
-    android:background="@drawable/petrisberg_image">
+    android:orientation="vertical">
 
     <ScrollView
         android:id="@+id/table"
@@ -23,22 +22,22 @@
 
             <SearchView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:queryHint="Modul suchen"
                 android:iconifiedByDefault="false"
                 android:layout_marginBottom="20dp"
                 android:id="@+id/searchBar"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:layout_gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/noGrades"
-                android:text="1. Anmelden \n2. App neu starten\n3. Hier deine Noten einsehen"
+                android:text="@string/rebootAppSeeGrades"
                 android:fontFamily="@font/inte_medium"
-                android:textColor="#fff"
-                android:textSize="19sp"/>
+                android:textColor="#fff" />
 
         </LinearLayout>
     </ScrollView>
@@ -48,24 +47,16 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:scaleType="fitEnd"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:gravity="bottom"
-        android:minHeight="150dp"
         android:layout_marginBottom="25dp">
 
-        <Button
-            android:layout_height="20dp"
-            android:layout_width="20dp"
-            android:id="@+id/leftFragmentButton"
-            android:background="@drawable/emptycircle"
-            android:layout_marginRight="10dp"
-            />
-
-        <Button
-            android:layout_height="20dp"
-            android:layout_width="20dp"
-            android:background="@drawable/filledcircle"
-            />
+        <TextView
+            android:id="@+id/swipeleft"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/SwipeLeft"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 </LinearLayout>
