@@ -26,6 +26,9 @@
 -keep public class org.w3c.dom.**
 -keep public class sun.awt.**
 -keep public class xyz.nulldev.huandroid.**
+-dontwarn org.xml.sax.**    #added
+-keep class org.apache.**   #added
+-dontwarn class org.apache.commons.logging.Log
 -dontwarn org.apache.xerces.dom.DocumentImpl
 -dontwarn net.sourceforge.htmlunit.**
 -dontwarn org.apache.bcel.verifier.**
