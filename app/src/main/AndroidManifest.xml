@@ -10,13 +10,12 @@
     <application
         android:largeHeap="true"
         android:name="androidx.multidex.MultiDexApplication"
-        android:icon="@mipmap/hochschulcrawlerlogoicon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/hochschulcrawlerlogoicon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:allowBackup="true"
-        android:fullBackupContent="true">
+        android:allowBackup="false"
+        android:fullBackupContent="false">
 
         <activity
             android:name="de.clinc8686.hochschul_crawler.MainActivity"
