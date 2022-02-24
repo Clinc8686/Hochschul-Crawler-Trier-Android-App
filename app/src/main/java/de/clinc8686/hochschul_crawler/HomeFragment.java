@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +89,17 @@ public class HomeFragment extends Fragment {
             builder.setTitle(R.string.headerPrivacypolicy)
                     .setMessage(getString(R.string.privacypolicy))
                     .setPositiveButton(R.string.agreement, dialogClickListener)
-                    .setNegativeButton(R.string.decline, dialogClickListener).show();
+                    .setNegativeButton(R.string.decline, dialogClickListener);
+
+            AlertDialog dialog = builder.create();
+            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface arg0) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.rgb(0, 158, 40));
+                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.rgb(156, 0, 13));
+                }
+            });
+            dialog.show();
         }
         btn_login.setOnClickListener(view -> {
             progressBarLogin.setVisibility(View.VISIBLE);
@@ -159,8 +171,8 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progessValue, boolean b) {
                 HomeFragment.value = progessValue;
-                text_seekbar_minute.setText(getString(R.string.All) + HomeFragment.value + getString(R.string.MinutesToUpdate) +
-                        getString(R.string.EstimatedUsage) + dataUsage());
+                text_seekbar_minute.setText(getString(R.string.All) + " " + HomeFragment.value + " " +getString(R.string.MinutesToUpdate) +
+                        getString(R.string.EstimatedUsage) + " " + dataUsage());
             }
 
             @Override
@@ -170,8 +182,8 @@ public class HomeFragment extends Fragment {
             @SuppressLint("SetTextI18n")
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                text_seekbar_minute.setText(getString(R.string.All) + HomeFragment.value + getString(R.string.MinutesToUpdate) +
-                        getString(R.string.EstimatedUsage) + dataUsage());
+                text_seekbar_minute.setText(getString(R.string.All) + " " + HomeFragment.value + " " + getString(R.string.MinutesToUpdate) +
+                        getString(R.string.EstimatedUsage) + " " + dataUsage());
             }
         });
 
@@ -254,6 +266,7 @@ public class HomeFragment extends Fragment {
                 loginfailed();
                 Alarm.stopAlarm(getActivity());
             } catch (Exception e) {     //Anmeldung schlug aus anderen Gründen fehl
+                Log.e("exception", "" + e.toString());
                 getActivity().runOnUiThread(() -> new Message(getActivity(), getString(R.string.LoginFailedWrong)));
                 loginfailed();
                 Alarm.stopAlarm(getActivity());
@@ -267,7 +280,7 @@ public class HomeFragment extends Fragment {
             public void run() {
                 TextView loggingstatus_text = view.findViewById(R.id.loggingstatus_text);
                 loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                loggingstatus_text.setTextColor(Color.RED);
+                loggingstatus_text.setTextColor(Color.WHITE);
                 loggingstatus_text.setText(R.string.not_logged_in);
 
                 TextView appCloseText = view.findViewById(R.id.appCloseText);

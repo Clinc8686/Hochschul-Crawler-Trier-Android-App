@@ -20,10 +20,19 @@ public class Database {
         if (!resultSet.moveToFirst()) {
             sqlgrade.execSQL("INSERT INTO Grades (SEMESTER, MODULNUMBER, MODUL, PASS, GRADE) VALUES(\"" + semester + "\", \"" + modulNumber + "\", \"" + modul + "\", \"" + pass + "\", \"" + grade + "\");");
             resultSet.close();
+            resultSet.close();
             return true;
+        } else {
+            String databasegrade = resultSet.getString(resultSet.getColumnIndex("GRADE"));
+            if (databasegrade.equals(grade)) {
+                resultSet.close();
+                return false;
+            } else {
+                sqlgrade.execSQL("UPDATE Grades SET GRADE = \'" + grade + "\' WHERE SEMESTER = \'" + semester + "\' and MODUL = \'" + modul + "\' and MODULNUMBER = \'" + modulNumber + "\'");
+                resultSet.close();
+                return true;
+            }
         }
-        resultSet.close();
-        return false;
     }
 
     public ArrayList<ModulInfo> selectData(Context context) {

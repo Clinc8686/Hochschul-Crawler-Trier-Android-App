@@ -59,7 +59,7 @@
         android:enabled="true"
         android:text="@string/login"
         android:backgroundTint="#FF5722"
-        android:textColor="#FFFFFF" />
+        android:textColor="#000000" />
 
     <ProgressBar
         android:id="@+id/progressBarLogin"
@@ -111,7 +111,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:text="@string/not_logged_in"
-        android:textColor="#FF0000" />
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/intervall_text"
@@ -120,7 +120,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:text="@string/aktualisierungsintervall_waehlen"
-        android:textColor="#FFFFFF" />
+        android:textColor="#fff" />
 
     <SeekBar
         android:id="@+id/seekBar"
@@ -166,7 +166,7 @@
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
         android:layout_marginTop="10dp"
-        android:textColor="#9CFFFFFF" />
+        android:textColor="#D2FFFFFF" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -183,7 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textAlignment="center"
-            android:textColor="#68FFFFFF"
+            android:textColor="#D2FFFFFF"
             android:text="@string/license"
             android:id="@+id/license"
             android:layout_marginBottom="10dp"/>

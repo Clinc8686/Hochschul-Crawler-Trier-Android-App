@@ -2,6 +2,7 @@ package de.clinc8686.hochschul_crawler;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -31,18 +34,25 @@ public class DisplayHomeMetrics {
     private void createMetrics() {
         ((TextView) view.findViewById(R.id.header)).setTextSize(width/46.f);
 
-        ((EditText) view.findViewById(R.id.et_name)).setTextSize(width/61.6f);
+        ((EditText) view.findViewById(R.id.et_name)).setTextSize(width/45.f);
         ((EditText) view.findViewById(R.id.et_name)).setPadding(100, 30, 100, 30);
 
-        ((EditText) view.findViewById(R.id.et_password)).setTextSize(width/61.6f);
+        ((EditText) view.findViewById(R.id.et_password)).setTextSize(width/45.f);
         ((EditText) view.findViewById(R.id.et_password)).setPadding(100, 30, 100, 30);
 
         ((Button) view.findViewById(R.id.btn_login)).setTextSize(width/61.6f);
         ((Button) view.findViewById(R.id.btn_login)).setPadding(100, 30, 100, 30);
 
-        ((RadioButton) view.findViewById(R.id.radioButtonTrier)).setTextSize(width/70.4f);
-        ((RadioButton) view.findViewById(R.id.radioButtonAachen)).setTextSize(width/70.4f);
-        ((RadioButton) view.findViewById(R.id.radioButtonKoblenz)).setTextSize(width/70.4f);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)(width/12.5f), (int)(width/12.5f));
+        params.topMargin = (int) (width/20.76923);
+        ((ProgressBar) view.findViewById(R.id.progressBarLogin)).setLayoutParams(params);
+
+        ((RadioButton) view.findViewById(R.id.radioButtonTrier)).setTextSize(width/60.4f);
+        ((RadioButton) view.findViewById(R.id.radioButtonTrier)).setTextColor(Color.WHITE);
+        ((RadioButton) view.findViewById(R.id.radioButtonAachen)).setTextSize(width/60.4f);
+        ((RadioButton) view.findViewById(R.id.radioButtonAachen)).setTextColor(Color.WHITE);
+        ((RadioButton) view.findViewById(R.id.radioButtonKoblenz)).setTextSize(width/60.4f);
+        ((RadioButton) view.findViewById(R.id.radioButtonKoblenz)).setTextColor(Color.WHITE);
 
         ((TextView) view.findViewById(R.id.appCloseText)).setTextSize(width/61.6f);
         ((TextView) view.findViewById(R.id.loggingstatus_text)).setTextSize(width/61.6f);

@@ -28,6 +28,10 @@
 -keep public class xyz.nulldev.huandroid.**
 -dontwarn org.xml.sax.**    #added
 -keep class org.apache.**   #added
+-keep class de.clinc8686.hochschul_crawler.** { *; }   #added
+-dontusemixedcaseclassnames   #added
+-dontskipnonpubliclibraryclasses   #added
+-verbose
 -dontwarn class org.apache.commons.logging.Log
 -dontwarn org.apache.xerces.dom.DocumentImpl
 -dontwarn net.sourceforge.htmlunit.**

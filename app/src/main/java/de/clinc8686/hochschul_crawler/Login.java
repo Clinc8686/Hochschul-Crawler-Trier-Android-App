@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -48,7 +49,7 @@ public class Login {
             public void run() {
                 TextView loggingstatus_text = view.findViewById(R.id.loggingstatus_text);
                 loggingstatus_text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                loggingstatus_text.setTextColor(Color.GREEN);
+                loggingstatus_text.setTextColor(Color.rgb(10, 82, 0));
                 loggingstatus_text.setText(R.string.logged_in);
 
                 TextView appCloseText = view.findViewById(R.id.appCloseText);
@@ -80,6 +81,7 @@ public class Login {
                     webClient.close();
                     throw new TooManyFalseLoginException("gesperrt");
                 }
+                Log.e("exception", "" + hs_Login.asText());
                 HtmlForm hs_login_form = hs_Login.getFormByName("login");
                 HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
                 HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
@@ -155,13 +157,13 @@ public class Login {
     @SuppressLint("SetJavaScriptEnabled")
     private WebClient createWebClient() {
         WebClient webClient = new WebClient();
-        webClient.getOptions().setTimeout(30000);
+        webClient.getOptions().setTimeout(50000);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setCssEnabled(false);
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setRedirectEnabled(true);
-        webClient.waitForBackgroundJavaScript(5000);
+        webClient.waitForBackgroundJavaScript(50000);
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         return webClient;
     }
