@@ -11,15 +11,15 @@ android {
         applicationId "de.clinc8686.hochschul_crawler"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.02"
+        versionCode 9
+        versionName "1.04"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled  false
-            useProguard false
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }

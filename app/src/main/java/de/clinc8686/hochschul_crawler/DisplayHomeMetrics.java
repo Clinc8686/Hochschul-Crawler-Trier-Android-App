@@ -26,7 +26,6 @@ public class DisplayHomeMetrics {
         screensize.getSize(size);
         this.width = size.x;
         this.height = size.y;
-        Log.e("size", width +" " + height);
         createMetrics();
     }
 

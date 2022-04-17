@@ -81,7 +81,7 @@ public class Login {
                     webClient.close();
                     throw new TooManyFalseLoginException("gesperrt");
                 }
-                Log.e("exception", "" + hs_Login.asText());
+                
                 HtmlForm hs_login_form = hs_Login.getFormByName("login");
                 HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
                 HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");

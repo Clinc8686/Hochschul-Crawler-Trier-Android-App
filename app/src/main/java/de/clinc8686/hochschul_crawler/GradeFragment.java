@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -58,12 +60,10 @@ public class GradeFragment extends Fragment {
         ((TextView) view.findViewById(R.id.noGrades)).setTextSize(width/46.f);
         SearchView searchView = view.findViewById(R.id.searchBar);
 
-        LinearLayout linearLayout1 = (LinearLayout) searchView.getChildAt(0);
-        LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
-        LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
-        AutoCompleteTextView autoComplete = (AutoCompleteTextView) linearLayout3.getChildAt(0);
-        autoComplete.setTextSize(width/61.6f);
-        autoComplete.setTextColor(Color.WHITE);
+        int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = (TextView) searchView.findViewById(id);
+        textView.setTextColor(Color.WHITE);
+        textView.setTextSize(width/61.6f);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -129,6 +129,7 @@ public class GradeFragment extends Fragment {
         textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
         textView.setPadding(2, 2, 2, 1);
         textView.setShadowLayer(3.0f, -1, -1, Color.LTGRAY);
+        textviews.add(textView);
         return textView;
     }
 
@@ -140,6 +141,7 @@ public class GradeFragment extends Fragment {
         textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
         textView.setPadding(2, 1, 2, 1);
         textView.setShadowLayer(3.0f, -1, -1, Color.LTGRAY);
+        textviews.add(textView);
         return textView;
     }
 
@@ -151,6 +153,7 @@ public class GradeFragment extends Fragment {
         textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
         textView.setPadding(2, 1, 2, 70);
         textView.setShadowLayer(3.0f, -1, -1, Color.LTGRAY);
+        textviews.add(textView);
         return textView;
     }
 }

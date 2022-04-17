@@ -23,6 +23,7 @@ public class Notification {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setDefaults(DEFAULT_SOUND | DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setContentIntent(PendingIntent.getActivity(this.context, 0, new Intent(this.context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
 
         NotificationManager manager = (context.getApplicationContext().getSystemService(NotificationManager.class));
