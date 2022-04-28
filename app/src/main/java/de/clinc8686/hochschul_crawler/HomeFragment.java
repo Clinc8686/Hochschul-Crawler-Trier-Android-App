@@ -69,7 +69,7 @@ public class HomeFragment extends Fragment {
             Login.loginsuccess(view, getActivity());
             SharedPreferences prefs = (getContext().getSharedPreferences((getContext().getResources().getString(R.string.app_name)), Context.MODE_PRIVATE));
             HomeFragment.value = prefs.getInt("interval", 0);
-            text_seekbar_minute.setText(getString(R.string.All) + HomeFragment.value + getString(R.string.MinutesToUpdate) +
+            text_seekbar_minute.setText(getString(R.string.All) + " " + HomeFragment.value + " " + getString(R.string.MinutesToUpdate) +
                     getString(R.string.EstimatedUsage) + dataUsage());
         }
 
@@ -131,6 +131,7 @@ public class HomeFragment extends Fragment {
                             builder.setNeutralButton(android.R.string.ok,
                                     (dialog, id) -> {
                                         new Alarm(getActivity(), value);
+                                        new BootLoader().startBootLoader(getActivity());
                                         dialog.cancel();
                                     });
 
@@ -138,6 +139,7 @@ public class HomeFragment extends Fragment {
                             alert.show();
                         } else {
                             new Alarm(getActivity().getApplicationContext(), value);
+                            new BootLoader().startBootLoader(getActivity());
                         }
 
                         checkFirstLogin(login);
@@ -147,6 +149,7 @@ public class HomeFragment extends Fragment {
                 //Beim neustarten der App, prüfen ob Service noch läuft, weil Anmeldung nicht mehr vorhanden ist. Ggf. Service stoppen
                 if (Alarm.checkAlarm(getActivity())) {
                     Alarm.stopAlarm(getActivity());
+                    new BootLoader().stopBootLoader(getActivity());
                 }
 
                 loginfailed();
@@ -155,6 +158,7 @@ public class HomeFragment extends Fragment {
                 HomeFragment.username = "";
                 HomeFragment.password = "";
                 Alarm.stopAlarm(getActivity());
+                new BootLoader().stopBootLoader(getActivity());
                 Database database = new Database(getContext());
                 database.dropTable();
                 SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getApplicationContext().getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
@@ -196,8 +200,9 @@ public class HomeFragment extends Fragment {
                         text_qis_abschaltung.setVisibility(View.VISIBLE);
                         et_name.setHint(R.string.benutzerkennungForm);
                         checkbox = "checkBoxTrier";
+                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
                         break;
-                    case R.id.radioButtonKoblenz:
+                    /*case R.id.radioButtonKoblenz:
                         text_qis_abschaltung.setVisibility(View.INVISIBLE);
                         et_name.setHint(R.string.hrzloginForm);
                         checkbox = "checkBoxKoblenz";
@@ -216,7 +221,7 @@ public class HomeFragment extends Fragment {
                         getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
                         RadioButton rb2 = getActivity().findViewById(R.id.radioButtonTrier);
                         rb2.setChecked(true);
-                        break;
+                        break;*/
                 }
             }
         });

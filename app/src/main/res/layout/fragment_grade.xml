@@ -41,22 +41,4 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:scaleType="fitEnd"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:gravity="bottom"
-        android:layout_marginBottom="25dp">
-
-        <TextView
-            android:id="@+id/swipeleft"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/SwipeLeft"
-            android:textColor="#FFFFFF"/>
-    </LinearLayout>
 </LinearLayout>

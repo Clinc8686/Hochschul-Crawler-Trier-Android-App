@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,14 +57,14 @@ public class GradeFragment extends Fragment {
         this.width = size.x;
         this.height = size.y;
 
-        ((TextView) view.findViewById(R.id.swipeleft)).setTextSize(width/80.f);
-        ((TextView) view.findViewById(R.id.noGrades)).setTextSize(width/46.f);
+        //((TextView) view.findViewById(R.id.swipeleft)).setTextSize(width/80.f);
+        ((TextView) view.findViewById(R.id.noGrades)).setAutoSizeTextTypeUniformWithConfiguration(12, 24, 4, TypedValue.COMPLEX_UNIT_SP);
         SearchView searchView = view.findViewById(R.id.searchBar);
 
         int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView textView = (TextView) searchView.findViewById(id);
         textView.setTextColor(Color.WHITE);
-        textView.setTextSize(width/61.6f);
+        textView.setAutoSizeTextTypeUniformWithConfiguration(12, 24, 4, TypedValue.COMPLEX_UNIT_SP);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -124,7 +125,7 @@ public class GradeFragment extends Fragment {
     TextView createModulTextView(String modulNumber, String modul) {
         TextView textView = new TextView(view.getContext());
         textView.setText(modulNumber + " " + modul);
-        textView.setTextSize(width/61.6f);
+        textView.setAutoSizeTextTypeUniformWithConfiguration(12, 24, 4, TypedValue.COMPLEX_UNIT_SP);
         textView.setTextColor(Color.WHITE);
         textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
         textView.setPadding(2, 2, 2, 1);
@@ -136,7 +137,7 @@ public class GradeFragment extends Fragment {
     TextView createGradeTextView(String pass, String grade) {
         TextView textView = new TextView(view.getContext());
         textView.setText(pass + " mit " + grade);
-        textView.setTextSize(width/77.f);
+        textView.setAutoSizeTextTypeUniformWithConfiguration(8, 20, 4, TypedValue.COMPLEX_UNIT_SP);
         textView.setTextColor(Color.rgb(228, 228, 228));
         textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
         textView.setPadding(2, 1, 2, 1);
@@ -148,7 +149,7 @@ public class GradeFragment extends Fragment {
     TextView createSemesterTextView(String semester) {
         TextView textView = new TextView(view.getContext());
         textView.setText(semester);
-        textView.setTextSize(width/77.f);
+        textView.setAutoSizeTextTypeUniformWithConfiguration(8, 20, 4, TypedValue.COMPLEX_UNIT_SP);
         textView.setTextColor(Color.rgb(228, 228, 228));
         textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
         textView.setPadding(2, 1, 2, 70);

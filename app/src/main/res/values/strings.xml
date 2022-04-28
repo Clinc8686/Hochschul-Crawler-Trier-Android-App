@@ -30,7 +30,7 @@
                             \n\nDie vorliegende Datenschutzerklärung ist aktuell gültig und datiert vom 29. Januar 2022.</string>
 
     <string name="noteRestart">Now you can close the app.</string>
-    <string name="dataEstimated">Every 60 minutes will be checked.\n Estimated data usage per month: 387 MByte</string>
+    <string name="dataEstimated">Every 60 minutes will be checked.\n Estimated data usage per month: 96 MByte</string>
     <string name="exceptNight">Except at night. Between 1 a.m. and 6 a.m is the QIS not reachable.</string>
     <string name="license">Changes on HtmlUnit licensed under Apache License Version 2.0. Shim code is under GNU GPL v2 licensed. <a href='https://github.com/Clinc8686/Hochschul-Crawler-Trier-Android-App'>click!</a></string>
     <string name="NotificationTitleService">QIS Hochschul Crawler Service</string>
@@ -60,7 +60,7 @@
     <string name="usernameOrPasswdEmpty">Username or password empty!</string>
     <string name="LoginFailedInNight">Login failed: Between 1 a.m. and 6 a.m is the QIS not reachable!</string>
     <string name="StoppedService"><![CDATA[Service was stopped and user data deleted.]]></string>
-    <string name="All">Every </string>
+    <string name="All">Every</string>
     <string name="MinutesToUpdate"> minutes will be checked.\n</string>
     <string name="EstimatedUsage">Estimated data usage per month: </string>
     <string name="SearchingTesters">We are searching testers from other universities! Contact us at hochschulcrawler@gmail.com</string>
