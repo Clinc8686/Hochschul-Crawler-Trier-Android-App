@@ -101,71 +101,6 @@ public class HomeFragment extends Fragment {
             });
             dialog.show();
         }
-        btn_login.setOnClickListener(view -> {
-            progressBarLogin.setVisibility(View.VISIBLE);
-            EditText et_password = getActivity().findViewById(R.id.et_password);
-            HomeFragment.username = et_name.getText().toString();
-            HomeFragment.password = et_password.getText().toString();
-            radioGroup.setVisibility(View.GONE);
-            seekBar.setVisibility(View.GONE);
-            intervall_text.setVisibility(View.GONE);
-            loginHint.setVisibility(View.VISIBLE);
-            login = new Login(getActivity().getApplicationContext(), username, password, checkbox);
-            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(getContext().INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            if (!HomeFragment.loginsucess) {
-                if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
-                    new Message(getContext(), getString(R.string.usernameOrPasswdEmpty));
-                    loginfailed();
-                } else {
-                    LocalDateTime localdatetime = LocalDateTime.now();
-                    if (localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5) {
-                        new Message(getContext(), getString(R.string.LoginFailedInNight));
-                        loginfailed();
-                    } else {
-                        if (!Alarm.checkIntent(getActivity())) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setTitle(R.string.hinweis);
-                            builder.setMessage(R.string.hinweisBerechtigung);
-                            builder.setCancelable(true);
-                            builder.setNeutralButton(android.R.string.ok,
-                                    (dialog, id) -> {
-                                        new Alarm(getActivity(), value);
-                                        new BootLoader().startBootLoader(getActivity());
-                                        dialog.cancel();
-                                    });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
-                        } else {
-                            new Alarm(getActivity().getApplicationContext(), value);
-                            new BootLoader().startBootLoader(getActivity());
-                        }
-
-                        checkFirstLogin(login);
-                    }
-                }
-            } else {
-                //Beim neustarten der App, prüfen ob Service noch läuft, weil Anmeldung nicht mehr vorhanden ist. Ggf. Service stoppen
-                if (Alarm.checkAlarm(getActivity())) {
-                    Alarm.stopAlarm(getActivity());
-                    new BootLoader().stopBootLoader(getActivity());
-                }
-
-                loginfailed();
-                btn_login.setText("Login");
-                radioGroup.setVisibility(View.VISIBLE);
-                HomeFragment.username = "";
-                HomeFragment.password = "";
-                Alarm.stopAlarm(getActivity());
-                new BootLoader().stopBootLoader(getActivity());
-                Database database = new Database(getContext());
-                database.dropTable();
-                SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getApplicationContext().getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
-                prefs.edit().clear().apply();
-                new Message(getContext(), getString(R.string.StoppedService));
-            }
-        });
 
         SeekBar seekBar = view.findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -188,41 +123,6 @@ public class HomeFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 text_seekbar_minute.setText(getString(R.string.All) + " " + HomeFragment.value + " " + getString(R.string.MinutesToUpdate) +
                         getString(R.string.EstimatedUsage) + " " + dataUsage());
-            }
-        });
-
-        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @SuppressLint("NonConstantResourceId")
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioButtonTrier:
-                        text_qis_abschaltung.setVisibility(View.VISIBLE);
-                        et_name.setHint(R.string.benutzerkennungForm);
-                        checkbox = "checkBoxTrier";
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                        break;
-                    /*case R.id.radioButtonKoblenz:
-                        text_qis_abschaltung.setVisibility(View.INVISIBLE);
-                        et_name.setHint(R.string.hrzloginForm);
-                        checkbox = "checkBoxKoblenz";
-
-                        //tmp
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                        RadioButton rb = getActivity().findViewById(R.id.radioButtonTrier);
-                        rb.setChecked(true);
-                        break;
-                    case R.id.radioButtonAachen:
-                        text_qis_abschaltung.setVisibility(View.INVISIBLE);
-                        et_name.setHint(R.string.FHKennungForm);
-                        checkbox = "checkBoxAachen";
-
-                        //tmp
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                        RadioButton rb2 = getActivity().findViewById(R.id.radioButtonTrier);
-                        rb2.setChecked(true);
-                        break;*/
-                }
             }
         });
 
@@ -303,4 +203,101 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    public void loginClicked(View view) {
+            progressBarLogin.setVisibility(View.VISIBLE);
+            EditText et_password = getActivity().findViewById(R.id.et_password);
+            HomeFragment.username = et_name.getText().toString();
+            HomeFragment.password = et_password.getText().toString();
+            radioGroup.setVisibility(View.GONE);
+            seekBar.setVisibility(View.GONE);
+            intervall_text.setVisibility(View.GONE);
+            loginHint.setVisibility(View.VISIBLE);
+            login = new Login(getActivity().getApplicationContext(), username, password, checkbox);
+            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(getContext().INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (!HomeFragment.loginsucess) {
+                if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
+                    new Message(getContext(), getString(R.string.usernameOrPasswdEmpty));
+                    loginfailed();
+                } else {
+                    LocalDateTime localdatetime = LocalDateTime.now();
+                    if (localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5) {
+                        new Message(getContext(), getString(R.string.LoginFailedInNight));
+                        loginfailed();
+                    } else {
+                        if (!Alarm.checkIntent(getActivity())) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle(R.string.hinweis);
+                            builder.setMessage(R.string.hinweisBerechtigung);
+                            builder.setCancelable(true);
+                            builder.setNeutralButton(android.R.string.ok,
+                                    (dialog, id) -> {
+                                        new Alarm(getActivity(), value);
+                                        new BootLoader().startBootLoader(getActivity());
+                                        dialog.cancel();
+                                    });
+
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        } else {
+                            new Alarm(getActivity().getApplicationContext(), value);
+                            new BootLoader().startBootLoader(getActivity());
+                        }
+
+                        checkFirstLogin(login);
+                    }
+                }
+            } else {
+                //Beim neustarten der App, prüfen ob Service noch läuft, weil Anmeldung nicht mehr vorhanden ist. Ggf. Service stoppen
+                if (Alarm.checkAlarm(getActivity())) {
+                    Alarm.stopAlarm(getActivity());
+                    new BootLoader().stopBootLoader(getActivity());
+                }
+
+                loginfailed();
+                btn_login.setText("Login");
+                radioGroup.setVisibility(View.VISIBLE);
+                HomeFragment.username = "";
+                HomeFragment.password = "";
+                Alarm.stopAlarm(getActivity());
+                new BootLoader().stopBootLoader(getActivity());
+                Database database = new Database(getContext());
+                database.dropTable();
+                SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getApplicationContext().getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+                prefs.edit().clear().apply();
+                new Message(getContext(), getString(R.string.StoppedService));
+            }
+    }
+
+    public void GroupClicked(View view) {
+        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+                switch (radioGroup.getCheckedRadioButtonId()) {
+                    case R.id.radioButtonTrier:
+                        text_qis_abschaltung.setVisibility(View.VISIBLE);
+                        et_name.setHint(R.string.benutzerkennungForm);
+                        checkbox = "checkBoxTrier";
+                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
+                        break;
+                    /*case R.id.radioButtonKoblenz:
+                        text_qis_abschaltung.setVisibility(View.INVISIBLE);
+                        et_name.setHint(R.string.hrzloginForm);
+                        checkbox = "checkBoxKoblenz";
+
+                        //tmp
+                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
+                        RadioButton rb = getActivity().findViewById(R.id.radioButtonTrier);
+                        rb.setChecked(true);
+                        break;
+                    case R.id.radioButtonAachen:
+                        text_qis_abschaltung.setVisibility(View.INVISIBLE);
+                        et_name.setHint(R.string.FHKennungForm);
+                        checkbox = "checkBoxAachen";
+
+                        //tmp
+                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
+                        RadioButton rb2 = getActivity().findViewById(R.id.radioButtonTrier);
+                        rb2.setChecked(true);
+                        break;*/
+                }
+            }
 }

@@ -60,7 +60,8 @@
         android:enabled="true"
         android:text="@string/login"
         android:backgroundTint="#FF5722"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:onClick="loginClicked"/>
 
     <ProgressBar
         android:id="@+id/progressBarLogin"
@@ -78,7 +79,8 @@
         android:orientation="horizontal"
         android:layout_marginRight="10sp"
         android:layout_marginLeft="10sp"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:onClick="GroupClicked">
         <RadioButton android:id="@+id/radioButtonTrier"
             android:layout_width="120sp"
             android:layout_height="60sp"
