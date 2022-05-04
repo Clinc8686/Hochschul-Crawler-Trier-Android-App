@@ -82,15 +82,14 @@ public class Login {
                     throw new TooManyFalseLoginException("gesperrt");
                 }
                 
-                /*HtmlForm hs_login_form = hs_Login.getFormByName("login");
+                HtmlForm hs_login_form = hs_Login.getFormByName("login");
                 HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
                 HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
                 hs_login_username.setValueAttribute(username);
                 hs_login_password.setValueAttribute(password);
                 //HtmlButton button = null; //= hs_Login.getFirstByXPath("//*[@type='submit']");
                 HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
-                qis_login_page = button.click();*/
-                qis_login_page = hs_Login; //tmp
+                qis_login_page = button.click();
                 break;
             case "checkBoxAachen":
                 qis_login_page = webClient.getPage("https://www.qis.fh-aachen.de/");
