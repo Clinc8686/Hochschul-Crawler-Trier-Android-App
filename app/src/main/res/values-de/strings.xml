@@ -59,7 +59,7 @@
     <string name="decline">Ich lehne ab</string>
     <string name="usernameOrPasswdEmpty">Benutzerkennung oder Passwort leer!</string>
     <string name="LoginFailedInNight">Anmeldung fehlgeschlagen: QIS zwischen 1 und 6 Uhr nicht erreichbar!</string>
-    <string name="StoppedService"><![CDATA[Service wurde gestoppt & Logindaten entfernt.]]></string>
+    <string name="StoppedService"><![CDATA[Service wurde temporär gestoppt & Logindaten entfernt. Um vollständig zu stoppen deinstallieren.]]></string>
     <string name="All">Alle</string>
     <string name="MinutesToUpdate"> Minuten wird aktualisiert.\n</string>
     <string name="EstimatedUsage">Geschätzte Datennutzung im Monat: </string>

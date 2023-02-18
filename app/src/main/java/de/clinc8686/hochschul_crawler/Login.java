@@ -5,10 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
@@ -18,28 +21,52 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
+
+import java.security.Key;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+
 public class Login {
     private final Context context;
     private final String username;
     private final String password;
-    private final String hochschule;
 
-    Login(Context context, String username, String password, String checkbox) {
+    Login(Context context, String username, String password) {
         this.context = context;
         this.username = username;
         this.password = password;
-        this.hochschule = checkbox;
     }
 
-    public void storePreferences(int value, Activity activity) {
-        SharedPreferences.Editor editor = activity.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE).edit();
-        editor.putString("username", username);
-        editor.putString("password", password);
-        editor.putString("hochschule", hochschule);
+    public void storeAndEncrypt(int value, Activity activity) throws Exception {
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        int KEY_SIZE = 128;
+        keyGenerator.init(KEY_SIZE);
+        Key key = keyGenerator.generateKey();
+        String encryptUsername = encrypt(username, key);
+        String encryptPassword = encrypt(password, key);
+        storePreferences(value, activity, encryptUsername, encryptPassword);
+        Crawler_Service.setData(username, password);
+    }
+
+    private void storePreferences(int value, Activity activity, String encryptUsername, String encryptPassword) {
+        SharedPreferences.Editor editor = activity.getSharedPreferences("de.clinc8686.qishochschulcrawler", Context.MODE_PRIVATE).edit();
+        editor.putString("username", encryptUsername);
+        editor.putString("password", encryptPassword);
         editor.putInt("interval", value);
         editor.apply();
+    }
 
-        Crawler_Service.setData(username, password, hochschule);
+    public String encrypt(String data, Key key) throws Exception {
+        byte[] dataInBytes = data.getBytes();
+        Cipher encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
+        encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encryptedBytes = encryptionCipher.doFinal(dataInBytes);
+        return encode(encryptedBytes);
+    }
+
+    private String encode(byte[] data) {
+        return Base64.encodeToString(data, Base64.DEFAULT);
     }
 
     static void loginsuccess(View view, Activity activitiy) {
@@ -61,7 +88,7 @@ public class Login {
                 view.findViewById(R.id.intervall_text).setVisibility(View.GONE);
                 view.findViewById(R.id.loginHint).setVisibility(View.INVISIBLE);
 
-                HomeFragment.loginsucess = true;
+                HomeFragment.loginSuccess.setVariable(true);
                 Button btn_login = view.findViewById(R.id.btn_login);
                 btn_login.setText(R.string.logout);
             }});
@@ -69,43 +96,29 @@ public class Login {
 
     @SuppressLint("SetJavaScriptEnabled")
     public HtmlPage loginQIS() throws Exception {
-        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(java.util.logging.Level.OFF);
         HtmlPage grades;
-
         WebClient webClient = createWebClient();
-        HtmlPage qis_login_page = null;
-        switch (hochschule) {
-            case "checkBoxTrier":
-                HtmlPage hs_Login = webClient.getPage("https://qis.hochschule-trier.de/qisserver/rds?state=user&type=0&category=menu.browse&startpage=portal.vm");
-                if (hs_Login.asText().contains("gesperrt")) {
-                    webClient.close();
-                    throw new TooManyFalseLoginException("gesperrt");
-                }
-                
-                HtmlForm hs_login_form = hs_Login.getFormByName("login");
-                HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
-                HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
-                hs_login_username.setValueAttribute(username);
-                hs_login_password.setValueAttribute(password);
-                //HtmlButton button = null; //= hs_Login.getFirstByXPath("//*[@type='submit']");
-                HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
-                qis_login_page = button.click();
-                break;
-            case "checkBoxAachen":
-                qis_login_page = webClient.getPage("https://www.qis.fh-aachen.de/");
-                break;
-            case "checkBoxKoblenz":
-                qis_login_page = webClient.getPage("https://qisserver.hs-koblenz.de/");
-                break;
+        HtmlPage hs_Login = webClient.getPage("https://qis.hochschule-trier.de/qisserver/rds?state=user&type=0&category=menu.browse&startpage=portal.vm");
+        if (hs_Login.asText().contains("gesperrt")) {
+            webClient.closeAllWindows();
+            throw new TooManyFalseLoginException("gesperrt");
         }
 
-        HtmlPage qis_homepage = null;
+        HtmlForm hs_login_form = hs_Login.getFormByName("login");
+        HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
+        HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
+        hs_login_username.setValueAttribute(username);
+        hs_login_password.setValueAttribute(password);
+        HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
+        HtmlPage qis_login_page = button.click();
+
         HtmlForm qis_login_form = qis_login_page.getFormByName("loginform");
         HtmlTextInput qis_login_username = qis_login_form.getInputByName("asdf");
         HtmlPasswordInput qis_login_password = qis_login_form.getInputByName("fdsa");
         qis_login_username.setValueAttribute(username);
         qis_login_password.setValueAttribute(password);
 
+        HtmlPage qis_homepage = null;
         HtmlButton qis_login_button = null;
         HtmlSubmitInput qis_login_submitbutton = null;
         if ((boolean) qis_login_form.getFirstByXPath(("count(//button[@type='submit']) > 0"))) {
@@ -150,7 +163,7 @@ public class Login {
             throw new Exception("konnte keinem Link folgen");
         }
 
-        webClient.close();
+        webClient.closeAllWindows();
         return grades;
     }
 
@@ -164,7 +177,6 @@ public class Login {
         webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setRedirectEnabled(true);
         webClient.waitForBackgroundJavaScript(50000);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
         return webClient;
     }
 }

@@ -23,7 +23,7 @@ public class Database {
             resultSet.close();
             return true;
         } else {
-            String databasegrade = resultSet.getString(resultSet.getColumnIndex("GRADE"));
+            @SuppressLint("Range") String databasegrade = resultSet.getString(resultSet.getColumnIndex("GRADE"));
             if (databasegrade.equals(grade)) {
                 resultSet.close();
                 return false;
@@ -35,6 +35,7 @@ public class Database {
         }
     }
 
+    @SuppressLint("Range")
     public ArrayList<ModulInfo> selectData(Context context) {
         ArrayList<ModulInfo> arraylist = new ArrayList<ModulInfo>();
         @SuppressLint("Recycle")

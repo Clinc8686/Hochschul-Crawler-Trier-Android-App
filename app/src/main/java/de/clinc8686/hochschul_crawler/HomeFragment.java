@@ -6,7 +6,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -17,20 +21,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.time.ZoneId;
 
 public class HomeFragment extends Fragment {
     private static String password;
     private static String username;
-    public static boolean loginsucess = false;
+    public static LoginSuccess loginSuccess = new LoginSuccess(false);
     private static int value = 60;
-    @SuppressLint("StaticFieldLeak")
     private ProgressBar progressBarLogin;
     private RadioGroup radioGroup;
     private long timestampTimeout = 0;
@@ -44,6 +46,9 @@ public class HomeFragment extends Fragment {
     private TextView text_seekbar_minute;
     private SeekBar seekBar;
     private TextView intervall_text;
+    public static BootCompletedReceiver bootCompletedReceiver;
+    private final String BOOT_COMPLETED_RECEIVER = "bootCompletedReceiver";
+
 
     public HomeFragment() {
         // Required empty public constructor
@@ -60,20 +65,24 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         this.view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        if (savedInstanceState != null) {
+            bootCompletedReceiver = (BootCompletedReceiver) savedInstanceState.getSerializable(BOOT_COMPLETED_RECEIVER);
+        }
+
         getLayoutObjects();
         new DisplayHomeMetrics(getContext(), view);
         boolean service_status = Alarm.checkAlarm(getActivity().getApplicationContext());
         if (service_status) {
-            HomeFragment.loginsucess = true;
+            HomeFragment.loginSuccess.setVariable(true);
             btn_login.setText("Logout");
             Login.loginsuccess(view, getActivity());
-            SharedPreferences prefs = (getContext().getSharedPreferences((getContext().getResources().getString(R.string.app_name)), Context.MODE_PRIVATE));
+            SharedPreferences prefs = (getContext().getSharedPreferences("de.clinc8686.qishochschulcrawler", Context.MODE_PRIVATE));
             HomeFragment.value = prefs.getInt("interval", 0);
             text_seekbar_minute.setText(getString(R.string.All) + " " + HomeFragment.value + " " + getString(R.string.MinutesToUpdate) +
                     getString(R.string.EstimatedUsage) + dataUsage());
         }
 
-        if (!loginsucess) {
+        if (!HomeFragment.loginSuccess.getVariable()) {
             DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
@@ -152,6 +161,7 @@ public class HomeFragment extends Fragment {
         intervall_text = view.findViewById(R.id.intervall_text);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public void checkFirstLogin(Login login) {
         new Thread(() -> {
             try {
@@ -162,8 +172,8 @@ public class HomeFragment extends Fragment {
 
                 HtmlPage grades = login.loginQIS();
                 Crawler_Service.checkGrades(grades, getContext(), true);
-                login.storePreferences(value, getActivity());
-                Login.loginsuccess(this.view, getActivity());
+                login.storeAndEncrypt(value, getActivity());
+                Login.loginsuccess(this.view, requireActivity());
                 //Anmeldung hat 1A funktioniert
             } catch (TooManyFalseLoginException e) {    //Anmeldung schlug fehl, weil zu oft falsches Passwort/Username
                 timestampTimeout = System.currentTimeMillis();
@@ -171,7 +181,6 @@ public class HomeFragment extends Fragment {
                 loginfailed();
                 Alarm.stopAlarm(getActivity());
             } catch (Exception e) {     //Anmeldung schlug aus anderen Gründen fehl
-                Log.e("exception", "" + e.toString());
                 getActivity().runOnUiThread(() -> new Message(getActivity(), getString(R.string.LoginFailedWrong)));
                 loginfailed();
                 Alarm.stopAlarm(getActivity());
@@ -197,12 +206,13 @@ public class HomeFragment extends Fragment {
                 view.findViewById(R.id.intervall_text).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.seekBar).setVisibility(View.VISIBLE);
 
-                HomeFragment.loginsucess = false;
+                HomeFragment.loginSuccess.setVariable(false);
                 Notification.cancelAllNotifications(getContext());
             }
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     public void loginClicked(View view) {
             progressBarLogin.setVisibility(View.VISIBLE);
             EditText et_password = getActivity().findViewById(R.id.et_password);
@@ -212,15 +222,15 @@ public class HomeFragment extends Fragment {
             seekBar.setVisibility(View.GONE);
             intervall_text.setVisibility(View.GONE);
             loginHint.setVisibility(View.VISIBLE);
-            login = new Login(getActivity().getApplicationContext(), username, password, checkbox);
-            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(getContext().INPUT_METHOD_SERVICE);
+            login = new Login(getActivity().getApplicationContext(), username, password);
+            InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            if (!HomeFragment.loginsucess) {
+            if (!HomeFragment.loginSuccess.getVariable()) {
                 if (et_name.getText().toString().equals("") || et_password.getText().toString().equals("")) {
                     new Message(getContext(), getString(R.string.usernameOrPasswdEmpty));
                     loginfailed();
                 } else {
-                    LocalDateTime localdatetime = LocalDateTime.now();
+                    LocalDateTime localdatetime = LocalDateTime.now(ZoneId.of("Europe/Berlin"));
                     if (localdatetime.getHour() >= 1 && localdatetime.getHour() <= 5) {
                         new Message(getContext(), getString(R.string.LoginFailedInNight));
                         loginfailed();
@@ -263,7 +273,7 @@ public class HomeFragment extends Fragment {
                 new BootLoader().stopBootLoader(getActivity());
                 Database database = new Database(getContext());
                 database.dropTable();
-                SharedPreferences prefs = getActivity().getSharedPreferences(getActivity().getApplicationContext().getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+                SharedPreferences prefs = getActivity().getSharedPreferences("de.clinc8686.qishochschulcrawler", Context.MODE_PRIVATE);
                 prefs.edit().clear().apply();
                 new Message(getContext(), getString(R.string.StoppedService));
             }
@@ -271,33 +281,19 @@ public class HomeFragment extends Fragment {
 
     public void GroupClicked(View view) {
         RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
-                switch (radioGroup.getCheckedRadioButtonId()) {
-                    case R.id.radioButtonTrier:
-                        text_qis_abschaltung.setVisibility(View.VISIBLE);
-                        et_name.setHint(R.string.benutzerkennungForm);
-                        checkbox = "checkBoxTrier";
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                        break;
-                    /*case R.id.radioButtonKoblenz:
-                        text_qis_abschaltung.setVisibility(View.INVISIBLE);
-                        et_name.setHint(R.string.hrzloginForm);
-                        checkbox = "checkBoxKoblenz";
+        switch (radioGroup.getCheckedRadioButtonId()) {
+            case R.id.radioButtonTrier:
+                text_qis_abschaltung.setVisibility(View.VISIBLE);
+                et_name.setHint(R.string.benutzerkennungForm);
+                checkbox = "checkBoxTrier";
+                getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
+                break;
+        }
+    }
 
-                        //tmp
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                        RadioButton rb = getActivity().findViewById(R.id.radioButtonTrier);
-                        rb.setChecked(true);
-                        break;
-                    case R.id.radioButtonAachen:
-                        text_qis_abschaltung.setVisibility(View.INVISIBLE);
-                        et_name.setHint(R.string.FHKennungForm);
-                        checkbox = "checkBoxAachen";
-
-                        //tmp
-                        getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                        RadioButton rb2 = getActivity().findViewById(R.id.radioButtonTrier);
-                        rb2.setChecked(true);
-                        break;*/
-                }
-            }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(BOOT_COMPLETED_RECEIVER, BootCompletedReceiver.class);
+    }
 }

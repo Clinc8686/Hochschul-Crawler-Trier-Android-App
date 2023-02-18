@@ -1,33 +1,33 @@
 <resources>
     <string name="app_name">HochschulCrawler</string>
     <string name="title_activity_main">Hochschul Crawler</string>
-    <string name="privacypolicy">1. Beschreibung und Umfang der Datenverarbeitung:
-                            \nBeim Absenden des nachfolgenden Formulars werden folgende personenbezogene Daten durch die Applikation erhoben und abgespeichert:
-                            \n• Rechenzentrums-/Fachhochschulkennung
-                            \n• Das zugehörige Passwort
-                            \n• Belegte und absolvierte Modulfächer an der Hochschule
-                            \n• Die Noten der eigenen Modulfächer
-                            \n\n2. Zweck der Datenverarbeitung:
-                            \nDie vorübergehende Speicherung der unter 1. genannten Daten dient dem Zweck der Übermittlung an die Hochschule, sich dort anzumelden und die eigenen Leistungen auszuwerten.
-                            \n\n3. Dauer der Speicherung:
-                            \nDie personenbezognen Daten werden unwiderruflich und sofortig gelöscht, sobald der Nutzer die Applikation über die im Betriebssystem vorgegebene Methode zur Deinstallation vom Gerät entfernt.
-                            \n\n4. Datenweitergabe:
-                            \nEine Weitergabe der Rechenzentrums-/Fachhochschulkennung und des Passworts erfolgt zur Abfrage der jeweiligen Modulinformationen auf und an die Server der gewählten Hochschule.
-                            \n\n5. Verantwortliche Stelle und Ansprechpartner für Fragen des Datenschutzes:
-                            \nVerantwortlich für die Verarbeitung der personenbezogenen Daten auf den Hochschul-Servern ist die jeweilige Hochschule.
-                            \nVerantwortlich für die Verarbeitung personenbezogener Daten in der Hochschul-Crawler Applikation ist:
-                            \nMario Lampert
-                            \nE-Mail: hochschulcrawler@gmail.com
-                            \n\n6. Rechtsgrundlage:
-                            \nSoweit für die Verarbeitungsvorgänge personenbezogener Daten eine Einwilligung der betroffenen Person eingeholt wird, dient Art. 6 Abs. 1 lit. a EU-Datenschutzgrundverordnung (DSGVO) als Rechtsgrundlage.
-                            \n\n7. Ihre Rechte:
-                            \nSie können von dem Verantwortlichen eine Bestätigung darüber verlangen, zu welchem Zweck die personenbezogenen Daten verarbeitet werden.
-                            \n\n8. Recht auf Löschung/Widerrufsrecht:
-                            \nSie können jederzeit Ihre Einwilligung widerrufen und die Applikation über die im Betriebssystem vorgegeben Weise zur Deinstallation vom Gerät entfernen. Damit einhergehend werden Ihre Daten vollständig vom Gerät entfernt.
-                            \n\n9. Recht auf Beschwerde bei einer Aufsichtsbehörde:
-                            Unbeschadet eines anderweitigen verwaltungsrechtlichen oder gerichtlichen Rechtsbehelfs steht Ihnen das Recht auf Beschwerde bei einer Aufsichtsbehörde, insbesondere in dem Mitgliedstaat Ihres Aufenthaltsorts, Ihres Arbeitsplatzes oder des Orts des mutmaßlichen Verstoßes, zu, wenn Sie der Ansicht sind, dass die Verarbeitung der Sie betreffenden personenbezogenen Daten gegen die DSGVO verstößt.
-                            Die Aufsichtsbehörde, bei der die Beschwerde eingereicht wurde, unterrichtet den Beschwerdeführer über den Stand und die Ergebnisse der Beschwerde einschließlich der Möglichkeit eines gerichtlichen Rechtsbehelfs nach Art. 78 DSGVO.
-                            \n\nDie vorliegende Datenschutzerklärung ist aktuell gültig und datiert vom 29. Januar 2022.</string>
+    <string name="privacypolicy">1. Description and scope of data processing:
+        \nUpon submitting the following form, the following personal data is collected and stored by the application:
+        \n• Data center/university identification
+        \n• The associated password
+        \n• Completed and passed module courses at the university
+        \n• Grades of the own module courses
+        \n\n2. Purpose of data processing:
+        \nThe temporary storage of the data mentioned under 1. serves the purpose of transmitting them to the university, to register there and evaluate one\'s own achievements.
+        \n\n3. Duration of storage:
+        \nThe personal data will be irretrievably and immediately deleted as soon as the user uninstalls the application from the device via the method prescribed in the operating system.
+        \n\n4. Data transfer:
+        \nThe data center/university identification and password will be transferred to the servers of the chosen university for querying the respective module information.
+        \n\n5. Controller and contact person for data protection questions:
+        \nThe respective university is responsible for the processing of personal data on the university servers.
+        \nResponsible for the processing of personal data in the university crawler application is:
+        \nMario Lampert
+        \nEmail: hochschulcrawler@gmail.com
+        \n\n6. Legal basis:
+        \nIf the processing of personal data requires the consent of the data subject, Article 6(1)(a) of the EU General Data Protection Regulation (GDPR) serves as the legal basis.
+        \n\n7. Your rights:
+        \nYou have the right to request confirmation from the controller as to the purpose for which personal data is being processed.
+        \n\n8. Right to deletion/revocation:
+        \nYou can revoke your consent at any time and remove the application from the device via the method prescribed in the operating system. Your data will be completely removed from the device as a result.
+        \n\n9. Right to lodge a complaint with a supervisory authority:
+        Without prejudice to any other administrative or judicial remedy, you have the right to lodge a complaint with a supervisory authority, in particular in the Member State of your habitual residence, place of work, or the place of the alleged infringement, if you believe that the processing of personal data relating to you violates the GDPR.
+        \nThe supervisory authority with which the complaint has been lodged shall inform the complainant of the progress and outcome of the complaint, including the possibility of a judicial remedy under Article 78 of the GDPR.
+        \n\nThis privacy policy is currently valid and dated January 29, 2022.</string>
 
     <string name="noteRestart">Now you can close the app.</string>
     <string name="dataEstimated">Every 60 minutes will be checked.\n Estimated data usage per month: 96 MByte</string>
@@ -35,7 +35,7 @@
     <string name="license">Changes on HtmlUnit licensed under Apache License Version 2.0. Shim code is under GNU GPL v2 licensed. <a href='https://github.com/Clinc8686/Hochschul-Crawler-Trier-Android-App'>click!</a></string>
     <string name="NotificationTitleService">QIS Hochschul Crawler Service</string>
     <string name="NotificationTextService">QIS Hochschul Crawler runs in background.</string>
-    <string name="headerPrivacypolicy"><![CDATA[Datenschutzerklärung & Einwilligung zur Verarbeitung personenbezogener Daten]]></string>
+    <string name="headerPrivacypolicy"><![CDATA[Privacy Policy & Consent to Processing of Personal Data.]]></string>
     <string name="login_page_header">QIS Hochschul Crawler</string>
     <string name="benutzerkennung">Username</string>
     <string name="passwort">Password</string>
@@ -44,7 +44,7 @@
     <string name="logged_in">Logged in</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="aktualisierungsintervall_waehlen">Choose the update interval</string>
-    <string name="LoginSeconds">Dependig on your internet connection, the login process can take up to 30 seconds.</string>
+    <string name="LoginSeconds">Depending on your internet connection, the login process can take up to 30 seconds.</string>
     <string name="SwipeRight">Swipe to the right to see your grades.</string>
     <string name="rebootAppSeeGrades">1. Login \n2. Restart application\n3. See here your grades</string>
     <string name="SwipeLeft">Swipe to the left to login or logout.</string>
@@ -55,16 +55,16 @@
     <string name="FHKennungForm">FH-Identifier</string>
     <string name="hinweis">Hint!</string>
     <string name="hinweisBerechtigung">Without the following permission, the application cannot run in an optimum way in the background.</string>
-    <string name="agreement">Ich willige diesem ein</string>
-    <string name="decline">Ich lehne ab</string>
+    <string name="agreement">I agree to this</string>
+    <string name="decline">I reject</string>
     <string name="usernameOrPasswdEmpty">Username or password empty!</string>
     <string name="LoginFailedInNight">Login failed: Between 1 a.m. and 6 a.m is the QIS not reachable!</string>
-    <string name="StoppedService"><![CDATA[Service was stopped and user data deleted.]]></string>
+    <string name="StoppedService"><![CDATA[Service has been temporarily stopped & login data removed. To stop completely uninstall.]]></string>
     <string name="All">Every</string>
     <string name="MinutesToUpdate"> minutes will be checked.\n</string>
     <string name="EstimatedUsage">Estimated data usage per month: </string>
     <string name="SearchingTesters">We are searching testers from other universities! Contact us at hochschulcrawler@gmail.com</string>
-    <string name="NewGrades">Es sind neue Noten verfügbar!</string>
+    <string name="NewGrades">There are new grades available!</string>
     <string name="NewGradesFor">New grades for </string>
     <string name="in"> in </string>
     <string name="available"> available!</string>

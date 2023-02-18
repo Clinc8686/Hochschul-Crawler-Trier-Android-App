@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "971382803267",
+    "project_id": "hochschul-crawler",
+    "storage_bucket": "hochschul-crawler.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971382803267:android:0b3181c5b6d7c08a56fdf6",
+        "android_client_info": {
+          "package_name": "de.clinc8686.hochschul_crawler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971382803267-2cisc2kbhk6daek2f752mpco8er9mcj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2gpS4nV9i1cqHdQOMvVTjGpDTrP0Rxx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971382803267-2cisc2kbhk6daek2f752mpco8er9mcj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971382803267:android:7213973713d0449256fdf6",
+        "android_client_info": {
+          "package_name": "de.clinc8686.qishochschulcrawler"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971382803267-2cisc2kbhk6daek2f752mpco8er9mcj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2gpS4nV9i1cqHdQOMvVTjGpDTrP0Rxx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971382803267-2cisc2kbhk6daek2f752mpco8er9mcj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

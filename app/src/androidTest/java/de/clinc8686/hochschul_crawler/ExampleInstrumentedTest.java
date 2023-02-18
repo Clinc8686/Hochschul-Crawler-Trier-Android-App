@@ -1,13 +1,14 @@
 package de.clinc8686.hochschul_crawler;
 
 import android.content.Context;
+
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -19,8 +20,7 @@ public class ExampleInstrumentedTest {
     @Test
     public void useAppContext() {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals("de.clinc8686.hochschul_crawler", appContext.getPackageName());
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        assertEquals("de.clinc8686.qishochschulcrawler", appContext.getPackageName());
     }
 }
