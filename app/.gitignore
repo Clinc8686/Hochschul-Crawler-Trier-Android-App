@@ -1,1 +1,4 @@
-/build
+/build!/release/
+!/release/app-release.aab
+/build/generated/res/google-services/debug/values/values.xml
+/build/generated/source/buildConfig/debug/de/clinc8686/hochschul_crawler/BuildConfig.java

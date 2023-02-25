@@ -22,6 +22,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 
+import java.io.IOException;
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -104,37 +105,22 @@ public class Login {
             throw new TooManyFalseLoginException("gesperrt");
         }
 
-        HtmlForm hs_login_form = hs_Login.getFormByName("login");
-        HtmlTextInput hs_login_username = hs_login_form.getInputByName("j_username");
-        HtmlPasswordInput hs_login_password = hs_login_form.getInputByName("j_password");
-        hs_login_username.setValueAttribute(username);
-        hs_login_password.setValueAttribute(password);
-        HtmlButton button = hs_Login.getFirstByXPath("//button[@type='submit']");
-        HtmlPage qis_login_page = button.click();
-
-        HtmlForm qis_login_form = qis_login_page.getFormByName("loginform");
-        HtmlTextInput qis_login_username = qis_login_form.getInputByName("asdf");
-        HtmlPasswordInput qis_login_password = qis_login_form.getInputByName("fdsa");
-        qis_login_username.setValueAttribute(username);
-        qis_login_password.setValueAttribute(password);
-
-        HtmlPage qis_homepage = null;
-        HtmlButton qis_login_button = null;
-        HtmlSubmitInput qis_login_submitbutton = null;
-        if ((boolean) qis_login_form.getFirstByXPath(("count(//button[@type='submit']) > 0"))) {
-            qis_login_button = qis_login_form.getFirstByXPath("//button[@type='submit']");
-            qis_homepage = qis_login_button.click();
-        } else if ((boolean) qis_login_form.getFirstByXPath(("count(//button[@type='submit']) > 0"))) {
-            qis_login_button = qis_login_form.getFirstByXPath("//button[@type='submit']");
-            qis_homepage = qis_login_button.click();
-        } else if ((boolean) qis_login_form.getFirstByXPath(("count(//*[@type='submit']) > 0"))) {
-            qis_login_submitbutton = qis_login_form.getFirstByXPath("//*[@type='submit']");
-            qis_homepage = qis_login_submitbutton.click();
+        int counter = 0;
+        while (counter <= 3) {
+            hs_Login = searchFillSubmitForm(hs_Login);
+            if (hs_Login.asText().contains("Sie sind angemeldet als")) {
+                break;
+            }
+            counter++;
         }
-        if (!qis_homepage.asText().contains("Sie sind angemeldet als")) {
+
+        if (!hs_Login.asText().contains("Sie sind angemeldet als")) {
             throw new Exception("nicht angemeldet");
         }
-        int counter = 0;
+
+        HtmlPage qis_homepage = hs_Login;
+
+        counter = 0;
         boolean performanceRecord = true, examinationManagement = true, attainment = true, graduation = true;
         while (counter <= 3 && !qis_homepage.asText().contains("Name des Studierenden")) {
             if (performanceRecord && ((boolean) qis_homepage.getFirstByXPath("count(//a[starts-with(@href, 'https://qis.hochschule-trier.de') and text()='Notenspiegel']) > 0"))) {
@@ -165,6 +151,48 @@ public class Login {
 
         webClient.closeAllWindows();
         return grades;
+    }
+
+    private HtmlPage searchFillSubmitForm(HtmlPage hs_Login) throws Exception {
+        if (hs_Login.getFirstByXPath("//form[contains(@name, 'login')]") != null) {
+            HtmlForm hs_login_form = hs_Login.getFirstByXPath("//form[contains(@name, 'login')]");
+            fillForm(hs_login_form);
+            return submitForm(hs_login_form);
+        } else {
+            throw new NoSuchFieldException("Form not found!");
+        }
+    }
+
+    private HtmlPage submitForm(HtmlForm hs_login_form) throws NoSuchFieldException, IOException {
+        HtmlPage qis_homepage = null;
+        HtmlButton qis_login_button = null;
+        HtmlSubmitInput qis_login_submitbutton = null;
+        if ((boolean) hs_login_form.getFirstByXPath(("count(//button[@type='submit']) > 0"))) {
+            qis_login_button = hs_login_form.getFirstByXPath("//button[@type='submit']");
+            qis_homepage = qis_login_button.click();
+        } else if ((boolean) hs_login_form.getFirstByXPath(("count(//*[@type='submit']) > 0"))) {
+            qis_login_submitbutton = hs_login_form.getFirstByXPath("//*[@type='submit']");
+            qis_homepage = qis_login_submitbutton.click();
+        } else {
+            throw new NoSuchFieldException("Submit button not found!");
+        }
+        return qis_homepage;
+    }
+
+    private void fillForm(HtmlForm hs_login_form) throws NoSuchFieldException {
+        HtmlTextInput hs_login_username;
+        HtmlPasswordInput hs_login_password;
+        if (hs_login_form.getFirstByXPath("//input[contains(@name, 'username')]") != null || hs_login_form.getFirstByXPath("//input[contains(@name, 'password')]") != null) {
+            hs_login_username = hs_login_form.getFirstByXPath("//input[contains(@name, 'username')]");
+            hs_login_password = hs_login_form.getFirstByXPath("//input[contains(@name, 'password')]");
+        } else if (hs_login_form.getFirstByXPath("//input[contains(@name, 'asdf')]") != null || hs_login_form.getFirstByXPath("//input[contains(@name, 'fdsa')]") != null) {
+            hs_login_username = hs_login_form.getFirstByXPath("//input[contains(@name, 'asdf')]");
+            hs_login_password = hs_login_form.getFirstByXPath("//input[contains(@name, 'fdsa')]");
+        } else {
+            throw new NoSuchFieldException("username or password not found!");
+        }
+        hs_login_username.setValueAttribute(username);
+        hs_login_password.setValueAttribute(password);
     }
 
     @SuppressLint("SetJavaScriptEnabled")

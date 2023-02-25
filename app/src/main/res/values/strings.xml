@@ -46,7 +46,7 @@
     <string name="aktualisierungsintervall_waehlen">Choose the update interval</string>
     <string name="LoginSeconds">Depending on your internet connection, the login process can take up to 30 seconds.</string>
     <string name="SwipeRight">Swipe to the right to see your grades.</string>
-    <string name="rebootAppSeeGrades">1. Login \n2. Restart application\n3. See here your grades</string>
+    <string name="firstLogin">You have to log in first to see your grades here.</string>
     <string name="SwipeLeft">Swipe to the left to login or logout.</string>
     <string name="LoginFailedTooManyFalse">Login failed! Too many login tries with wrong username/password! Your IP-Address is for a few minutes blocked.</string>
     <string name="LoginFailedWrong">Login failed! username/password wrong or no/unstable connection to the QIS!</string>

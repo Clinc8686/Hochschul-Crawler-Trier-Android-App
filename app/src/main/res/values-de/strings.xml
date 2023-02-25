@@ -46,7 +46,7 @@
     <string name="aktualisierungsintervall_waehlen">Wähle hier das Aktualisierungsintervall aus</string>
     <string name="LoginSeconds">Der Anmeldeprozess kann je nach Internetverbindung bis zu 30 Sekunden dauern.</string>
     <string name="SwipeRight">Swipe nach rechts um deine Noten einzusehen.</string>
-    <string name="rebootAppSeeGrades">1. Anmelden \n2. App neu starten\n3. Hier deine Noten einsehen</string>
+    <string name="firstLogin">You have to log in first to see your grades here.</string>
     <string name="SwipeLeft">Swipe nach links um dich an- oder abzumelden.</string>
     <string name="LoginFailedTooManyFalse">Anmeldung fehlgeschlagen! Zu oft falscher Benutzername/Passwort eingegeben! Deine IP-Adresse ist für einige Minuten gesperrt.</string>
     <string name="LoginFailedWrong">Anmeldung fehlgeschlagen! Benutzerkennung/Passwort falsch oder keine/schlechte Verbidung zum QIS!</string>

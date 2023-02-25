@@ -10,8 +10,8 @@ android {
         applicationId "de.clinc8686.hochschul_crawler"
         minSdk 26
         targetSdk 32
-        versionCode 13
-        versionName "1.08"
+        versionCode 14
+        versionName "1.09"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

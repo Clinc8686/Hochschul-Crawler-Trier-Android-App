@@ -167,12 +167,17 @@ public class GradeFragment extends Fragment {
         LinearLayout linearLayout = view.findViewById(R.id.linearLayoutGrades);
         if (linearLayout != null) {
             if (HomeFragment.loginSuccess.getVariable()) {
+                if(textviews.size() > 0) {
+                    for (TextView tv : textviews) {
+                        linearLayout.removeView(tv);
+                    }
+                }
+
                 Database database = new Database(view.getContext());
                 modulInfos = database.selectData(view.getContext());
                 if (modulInfos.size() > 0) {
                     view.findViewById(R.id.noGrades).setVisibility(View.GONE);
                     view.findViewById(R.id.searchBar).setVisibility(View.VISIBLE);
-
 
                     for (ModulInfo modulInfo : modulInfos) {
                         linearLayout.addView(createModulTextView(modulInfo.modulNumber, modulInfo.modul));
