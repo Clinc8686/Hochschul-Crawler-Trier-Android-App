@@ -8,7 +8,7 @@
     android:gravity="center_horizontal"
     android:padding="16dp"
     tools:context=".HomeFragment">
-    <!-- hier -->
+
     <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         android:textColor="#FFFFFF"
         tools:ignore="RtlCompat"
         android:autoSizeTextType="uniform" />
-    <!-- hier -->
+
     <EditText
         android:id="@+id/et_name"
         android:layout_width="180sp"
