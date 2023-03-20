@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "de.clinc8686.hochschul_crawler"
-        minSdk 26
+        minSdk 28
         targetSdk 32
         versionCode 14
         versionName "1.09"

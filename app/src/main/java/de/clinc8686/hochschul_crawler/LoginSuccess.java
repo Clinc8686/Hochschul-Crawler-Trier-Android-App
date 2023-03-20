@@ -4,7 +4,7 @@ public class LoginSuccess {
     public boolean initialised = false;
     private onValueChangeListener valueChangeListener;
 
-    LoginSuccess(boolean value) {
+    public LoginSuccess(boolean value) {
         this.initialised = value;
     }
 

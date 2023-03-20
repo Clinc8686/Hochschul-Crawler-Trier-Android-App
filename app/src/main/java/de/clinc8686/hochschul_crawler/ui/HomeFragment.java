@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +27,23 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import de.clinc8686.hochschul_crawler.Login;
+import de.clinc8686.hochschul_crawler.LoginSuccess;
+import de.clinc8686.hochschul_crawler.Notification;
+import de.clinc8686.hochschul_crawler.R;
+import de.clinc8686.hochschul_crawler.TooManyFalseLoginException;
+import de.clinc8686.hochschul_crawler.crawler.Alarm;
+import de.clinc8686.hochschul_crawler.crawler.AlertBuilder;
+import de.clinc8686.hochschul_crawler.crawler.BootCompletedReceiver;
+import de.clinc8686.hochschul_crawler.crawler.BootLoader;
+import de.clinc8686.hochschul_crawler.crawler.Crawler_Service;
+import de.clinc8686.hochschul_crawler.grades.Database;
+
 public class HomeFragment extends Fragment {
     private static String password;
     private static String username;
     public static LoginSuccess loginSuccess = new LoginSuccess(false);
-    private static int value = 60;
+    public static int value = 60;
     private ProgressBar progressBarLogin;
     private RadioGroup radioGroup;
     private long timestampTimeout = 0;
@@ -184,11 +195,12 @@ public class HomeFragment extends Fragment {
                 getActivity().runOnUiThread(() -> new Message(getActivity(), getString(R.string.LoginFailedWrong)));
                 loginfailed();
                 Alarm.stopAlarm(getActivity());
+                e.printStackTrace();
             }
         }).start();
     }
 
-    void loginfailed() {
+    public void loginfailed() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -236,19 +248,7 @@ public class HomeFragment extends Fragment {
                         loginfailed();
                     } else {
                         if (!Alarm.checkIntent(getActivity())) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setTitle(R.string.hinweis);
-                            builder.setMessage(R.string.hinweisBerechtigung);
-                            builder.setCancelable(true);
-                            builder.setNeutralButton(android.R.string.ok,
-                                    (dialog, id) -> {
-                                        new Alarm(getActivity(), value);
-                                        new BootLoader().startBootLoader(getActivity());
-                                        dialog.cancel();
-                                    });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
+                            new AlertBuilder(getActivity());
                         } else {
                             new Alarm(getActivity().getApplicationContext(), value);
                             new BootLoader().startBootLoader(getActivity());
@@ -277,18 +277,6 @@ public class HomeFragment extends Fragment {
                 prefs.edit().clear().apply();
                 new Message(getContext(), getString(R.string.StoppedService));
             }
-    }
-
-    public void GroupClicked(View view) {
-        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
-        switch (radioGroup.getCheckedRadioButtonId()) {
-            case R.id.radioButtonTrier:
-                text_qis_abschaltung.setVisibility(View.VISIBLE);
-                et_name.setHint(R.string.benutzerkennungForm);
-                checkbox = "checkBoxTrier";
-                getActivity().runOnUiThread(() -> new Message(getActivity(),getString(R.string.SearchingTesters)));
-                break;
-        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
+
+import de.clinc8686.hochschul_crawler.R;
 
 @SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity {
@@ -36,9 +38,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void loginClicked(View view) {
         homefragment.loginClicked(view);
-    }
-
-    public void GroupClicked(View view) {
-        homefragment.GroupClicked(view);
     }
 }

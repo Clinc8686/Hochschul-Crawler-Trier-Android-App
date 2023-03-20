@@ -1,11 +1,10 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.crawler;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -14,7 +13,7 @@ import android.provider.Settings;
 public class Alarm {
     private  Context context;
 
-    Alarm(Context context, int value) {
+    public Alarm(Context context, int value) {
         this.context = context;
 
         PowerManager powerManager = (PowerManager) this.context.getSystemService(Context.POWER_SERVICE);

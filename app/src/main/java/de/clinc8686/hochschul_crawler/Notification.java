@@ -12,10 +12,12 @@ import android.service.notification.StatusBarNotification;
 
 import androidx.core.app.NotificationCompat;
 
+import de.clinc8686.hochschul_crawler.ui.MainActivity;
+
 public class Notification {
     private final Context context;
 
-    Notification(Context context, String channel, String semester, String mod) {
+    public Notification(Context context, String channel, String semester, String mod) {
         this.context = context;
 
         NotificationChannel notificationChannel;
@@ -47,7 +49,7 @@ public class Notification {
                 builder.setContentTitle("QIS Hochschul Crawler")
                         .setAutoCancel(true)
                         .setContentText(context.getString(R.string.NewGrades))
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.NewGradesFor) + semester + context.getString(R.string.in) + mod + context.getString(R.string.available)));
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.NewGradesFor) + " " + semester + " " + context.getString(R.string.in) + " " + mod + " " + context.getString(R.string.available)));
 
                 manager.notify(54296, builder.build());
                 break;

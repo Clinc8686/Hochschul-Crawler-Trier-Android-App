@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.grades;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class Database {
     private SQLiteDatabase sqlgrade;
-    Database(Context context) {
+    public Database(Context context) {
         this.sqlgrade = (context.getApplicationContext().openOrCreateDatabase("HochschulCrawlerGrades", Context.MODE_PRIVATE, null));
     }
 
@@ -20,10 +20,10 @@ public class Database {
         if (!resultSet.moveToFirst()) {
             sqlgrade.execSQL("INSERT INTO Grades (SEMESTER, MODULNUMBER, MODUL, PASS, GRADE) VALUES(\"" + semester + "\", \"" + modulNumber + "\", \"" + modul + "\", \"" + pass + "\", \"" + grade + "\");");
             resultSet.close();
-            resultSet.close();
             return true;
         } else {
-            @SuppressLint("Range") String databasegrade = resultSet.getString(resultSet.getColumnIndex("GRADE"));
+            @SuppressLint("Range")
+            String databasegrade = resultSet.getString(resultSet.getColumnIndex("GRADE"));
             if (databasegrade.equals(grade)) {
                 resultSet.close();
                 return false;

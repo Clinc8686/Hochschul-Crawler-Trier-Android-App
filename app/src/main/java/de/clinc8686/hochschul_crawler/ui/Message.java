@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.ui;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Message {
-    Message(Context context, String text) {
+    public Message(Context context, String text) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display screensize = wm.getDefaultDisplay();
         Point size = new Point();

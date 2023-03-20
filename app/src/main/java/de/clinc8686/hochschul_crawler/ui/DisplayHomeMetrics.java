@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,10 +16,12 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import de.clinc8686.hochschul_crawler.R;
+
 public class DisplayHomeMetrics {
     View view;
     int width, height;
-    DisplayHomeMetrics(Context context, View view) {
+    public DisplayHomeMetrics(Context context, View view) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display screensize = wm.getDefaultDisplay();
         this.view = view;

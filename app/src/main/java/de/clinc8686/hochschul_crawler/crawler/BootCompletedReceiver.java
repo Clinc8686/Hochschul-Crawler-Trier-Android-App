@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.crawler;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
@@ -6,10 +6,10 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.provider.Settings;
-import android.util.Log;
+
+import de.clinc8686.hochschul_crawler.ui.HomeFragment;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
     @SuppressLint({"BatteryLife", "UnsafeProtectedBroadcastReceiver"})

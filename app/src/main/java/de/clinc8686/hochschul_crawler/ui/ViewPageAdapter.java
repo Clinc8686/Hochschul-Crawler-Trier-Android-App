@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.ui;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;

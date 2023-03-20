@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:padding="0dp"
-    tools:context=".MainActivity"
+    tools:context=".ui.MainActivity"
     android:background="@drawable/petrisberg_image_dunkler">
 
     <androidx.viewpager2.widget.ViewPager2

@@ -28,15 +28,19 @@ import java.security.Key;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 
+import de.clinc8686.hochschul_crawler.crawler.Crawler_Service;
+import de.clinc8686.hochschul_crawler.ui.HomeFragment;
+
 public class Login {
     private final Context context;
     private final String username;
     private final String password;
 
-    Login(Context context, String username, String password) {
+    public Login(Context context, String username, String password) {
         this.context = context;
         this.username = username;
         this.password = password;
+        Log.e("QISLogin", username + " " + password);
     }
 
     public void storeAndEncrypt(int value, Activity activity) throws Exception {
@@ -70,7 +74,7 @@ public class Login {
         return Base64.encodeToString(data, Base64.DEFAULT);
     }
 
-    static void loginsuccess(View view, Activity activitiy) {
+    public static void loginsuccess(View view, Activity activitiy) {
         activitiy.runOnUiThread(new Runnable() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -104,10 +108,10 @@ public class Login {
             webClient.closeAllWindows();
             throw new TooManyFalseLoginException("gesperrt");
         }
-
+        Log.e("QISLogin3", username + " " + password);
         int counter = 0;
         while (counter <= 3) {
-            hs_Login = searchFillSubmitForm(hs_Login);
+            hs_Login = searchLoginForm(hs_Login);
             if (hs_Login.asText().contains("Sie sind angemeldet als")) {
                 break;
             }
@@ -153,7 +157,8 @@ public class Login {
         return grades;
     }
 
-    private HtmlPage searchFillSubmitForm(HtmlPage hs_Login) throws Exception {
+    private HtmlPage searchLoginForm(HtmlPage hs_Login) throws Exception {
+        Log.e("QISLogin2", username + " " + password);
         if (hs_Login.getFirstByXPath("//form[contains(@name, 'login')]") != null) {
             HtmlForm hs_login_form = hs_Login.getFirstByXPath("//form[contains(@name, 'login')]");
             fillForm(hs_login_form);
@@ -191,6 +196,7 @@ public class Login {
         } else {
             throw new NoSuchFieldException("username or password not found!");
         }
+        Log.e("QIS", username + " " + password);
         hs_login_username.setValueAttribute(username);
         hs_login_password.setValueAttribute(password);
     }

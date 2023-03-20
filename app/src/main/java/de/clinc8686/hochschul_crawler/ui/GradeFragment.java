@@ -1,4 +1,4 @@
-package de.clinc8686.hochschul_crawler;
+package de.clinc8686.hochschul_crawler.ui;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -9,7 +9,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -21,10 +20,19 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import de.clinc8686.hochschul_crawler.LoginSuccess;
+import de.clinc8686.hochschul_crawler.R;
+import de.clinc8686.hochschul_crawler.grades.Database;
+import de.clinc8686.hochschul_crawler.grades.GradeText;
+import de.clinc8686.hochschul_crawler.grades.ModulInfo;
+import de.clinc8686.hochschul_crawler.grades.ModulText;
+import de.clinc8686.hochschul_crawler.grades.SemesterText;
 
 public class GradeFragment extends Fragment {
     View view;
@@ -63,37 +71,19 @@ public class GradeFragment extends Fragment {
 
     @SuppressLint("SetTextI18n")
     TextView createModulTextView(String modulNumber, String modul) {
-        TextView textView = new TextView(view.getContext());
-        textView.setText(modulNumber + " " + modul);
-        textView.setAutoSizeTextTypeUniformWithConfiguration(12, 24, 4, TypedValue.COMPLEX_UNIT_SP);
-        textView.setTextColor(Color.WHITE);
-        textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
-        textView.setPadding(2, 2, 2, 1);
-        textView.setShadowLayer(3.0f, -1, -1, Color.LTGRAY);
+        TextView textView = new ModulText(view, modulNumber, modul);
         textviews.add(textView);
         return textView;
     }
 
     TextView createGradeTextView(String pass, String grade) {
-        TextView textView = new TextView(view.getContext());
-        textView.setText(pass + " mit " + grade);
-        textView.setAutoSizeTextTypeUniformWithConfiguration(8, 20, 4, TypedValue.COMPLEX_UNIT_SP);
-        textView.setTextColor(Color.rgb(228, 228, 228));
-        textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
-        textView.setPadding(2, 1, 2, 1);
-        textView.setShadowLayer(3.0f, -1, -1, Color.LTGRAY);
+        TextView textView = new GradeText(view, pass, grade);
         textviews.add(textView);
         return textView;
     }
 
     TextView createSemesterTextView(String semester) {
-        TextView textView = new TextView(view.getContext());
-        textView.setText(semester);
-        textView.setAutoSizeTextTypeUniformWithConfiguration(8, 20, 4, TypedValue.COMPLEX_UNIT_SP);
-        textView.setTextColor(Color.rgb(228, 228, 228));
-        textView.setTypeface(ResourcesCompat.getFont(view.getContext(), R.font.inte_medium));
-        textView.setPadding(2, 1, 2, 70);
-        textView.setShadowLayer(3.0f, -1, -1, Color.LTGRAY);
+        TextView textView = new SemesterText(view, semester);
         textviews.add(textView);
         return textView;
     }
@@ -108,7 +98,7 @@ public class GradeFragment extends Fragment {
         super.onResume();
 
         //((TextView) view.findViewById(R.id.swipeleft)).setTextSize(width/80.f);
-        ((TextView) view.findViewById(R.id.noGrades)).setAutoSizeTextTypeUniformWithConfiguration(12, 24, 4, TypedValue.COMPLEX_UNIT_SP);
+        //((TextView) view.findViewById(R.id.noGrades)).setAutoSizeTextTypeUniformWithConfiguration(12, 24, 4, TypedValue.COMPLEX_UNIT_SP);
         SearchView searchView = view.findViewById(R.id.searchBar);
 
         int id = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
@@ -121,7 +111,9 @@ public class GradeFragment extends Fragment {
             public boolean onQueryTextSubmit(String searchString) {
                 for(TextView textview : textviews) {
                     if (textview.getText().toString().toLowerCase(Locale.ROOT).contains(searchString.toLowerCase(Locale.ROOT))) {
-                        view.findViewById(R.id.table).scrollTo(0, textview.getBottom()-100);
+                        //view.findViewById(R.id.table).scrollTo(0, textview.getBottom()-100);
+                        ((ScrollView) view.findViewById(R.id.table)).smoothScrollTo(0, textview.getBottom()-100);
+                        Log.e("QIStextview", textview.getBottom() + "");
 
                         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.BLUE, Color.TRANSPARENT);
                         colorAnimation.setDuration(500);
