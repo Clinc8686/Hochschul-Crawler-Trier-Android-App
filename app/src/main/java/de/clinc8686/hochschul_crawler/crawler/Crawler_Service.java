@@ -12,7 +12,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyStore;
 import java.time.LocalDate;
@@ -20,7 +19,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import de.clinc8686.hochschul_crawler.grades.Database;
 import de.clinc8686.hochschul_crawler.Login;
@@ -33,7 +33,6 @@ public class Crawler_Service extends BroadcastReceiver  {
     @Override
     public void onReceive(Context context, Intent intent) {
         getPreferences(context);
-        Log.e("QISlogin", username + " " + password);
 
         new Thread(() -> {
             if (!Notification.isNotificationVisible(context.getApplicationContext())) {
@@ -46,11 +45,8 @@ public class Crawler_Service extends BroadcastReceiver  {
             new Thread(() -> {
                 Notification notification = new Notification(context.getApplicationContext(), "Prüfe neue Noten", "", "");
                 try {
-                    Log.e("QISInfox", "55 " + username + " " + password);
                     Login login = new Login(context.getApplicationContext(), username, password);
-                    Log.e("QISInfo", "66 " + username + " " + password);
                     HtmlPage grades = login.loginQIS();
-                    Log.e("QISInfo", "77");
                     checkGrades(grades, context, false);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -62,7 +58,6 @@ public class Crawler_Service extends BroadcastReceiver  {
     }
 
     public static void checkGrades(HtmlPage grades, Context context, boolean firstlogin) throws Exception {
-        Log.e("QISInfo", "1");
         String gradePageString = grades.asText();
         BufferedReader reader = new BufferedReader(new StringReader(gradePageString));
 
@@ -84,7 +79,6 @@ public class Crawler_Service extends BroadcastReceiver  {
         String sem;
         String modul;
         String modNum;
-        Log.e("QISInfo", "2");
         while ((stringLine = reader.readLine()) != null) {
             if ((((stringLine.contains("BE") || stringLine.contains("NB")) || stringLine.contains("NE")) && (!(mod.contains("PV") || mod.contains("Studienleistung") || stringLine.contains("Modul:"))) && (stringLine.contains("WiSe") || stringLine.contains("SoSe")))) {
                 sem = replaceAndSplitWhitespaces(stringLine,1) + " " + replaceAndSplitWhitespaces(stringLine, 2);
@@ -95,13 +89,9 @@ public class Crawler_Service extends BroadcastReceiver  {
 
                 Database database = new Database(context);
                 boolean newgrades = database.insertData(sem, modNum, modul, pass, grade, context);
-                Log.e("QISInfo", modul + " " + sem + " " + newgrades + firstlogin);
                 if (newgrades && !firstlogin) {
                     new Notification(context,"Neue Noten", semester, modNum + " " + modul);
                 }
-                //test
-                SQLiteDatabase sqlgrade = (context.getApplicationContext().openOrCreateDatabase("HochschulCrawlerGrades", Context.MODE_PRIVATE, null));
-                sqlgrade.execSQL("DELETE FROM Grades WHERE MODUL = 'Software-Entwurf' AND SEMESTER = 'WiSe 22/23'");
             }
             mod = stringLine;
         }
@@ -115,14 +105,16 @@ public class Crawler_Service extends BroadcastReceiver  {
         SharedPreferences prefs = (context.getApplicationContext().getSharedPreferences("de.clinc8686.qishochschulcrawler", Context.MODE_PRIVATE));
         String encryptedUsername = prefs.getString("username", "None");
         String encryptedPassword = prefs.getString("password", "None");
+        IvParameterSpec encryptedIV1 = new IvParameterSpec(decode(prefs.getString("IV1", "None")));
+        IvParameterSpec encryptedIV2 = new IvParameterSpec(decode(prefs.getString("IV2", "None")));
 
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             String KEY_ALIAS = "Q1S_HS#Trier4L14S";
-            Key key = keyStore.getKey(KEY_ALIAS, null);
-            username = decrypt(encryptedUsername, key);
-            password = decrypt(encryptedPassword, key);
+            SecretKey key = (SecretKey) keyStore.getKey(KEY_ALIAS, null);
+            username = decrypt(encryptedUsername, key, encryptedIV1);
+            password = decrypt(encryptedPassword, key, encryptedIV2);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -132,12 +124,10 @@ public class Crawler_Service extends BroadcastReceiver  {
         return Base64.decode(data, Base64.DEFAULT);
     }
 
-    public String decrypt(String encryptedData, Key key) throws Exception {
+    public String decrypt(String encryptedData, SecretKey key, IvParameterSpec IV) throws Exception {
         byte[] dataInBytes = decode(encryptedData);
-        Cipher decryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
-        int DATA_LENGTH = 128;
-        GCMParameterSpec spec = new GCMParameterSpec(DATA_LENGTH, decryptionCipher.getIV());
-        decryptionCipher.init(Cipher.DECRYPT_MODE, key, spec);
+        Cipher decryptionCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+        decryptionCipher.init(Cipher.DECRYPT_MODE, key, IV);
         byte[] decryptedBytes = decryptionCipher.doFinal(dataInBytes);
         return new String(decryptedBytes);
     }

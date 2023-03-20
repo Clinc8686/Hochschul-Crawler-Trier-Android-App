@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +25,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.KeyStore;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import de.clinc8686.hochschul_crawler.crawler.Crawler_Service;
 import de.clinc8686.hochschul_crawler.ui.HomeFragment;
@@ -40,34 +45,42 @@ public class Login {
         this.context = context;
         this.username = username;
         this.password = password;
-        Log.e("QISLogin", username + " " + password);
     }
 
     public void storeAndEncrypt(int value, Activity activity) throws Exception {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        int KEY_SIZE = 128;
-        keyGenerator.init(KEY_SIZE);
-        Key key = keyGenerator.generateKey();
-        String encryptUsername = encrypt(username, key);
-        String encryptPassword = encrypt(password, key);
-        storePreferences(value, activity, encryptUsername, encryptPassword);
+        String KEY_ALIAS = "Q1S_HS#Trier4L14S";
+        KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+        keyStore.load(null);
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+        KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7);
+        keyGenerator.init(builder.build());
+        SecretKey key = keyGenerator.generateKey();
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        String encryptUsername = encrypt(username, key, cipher);
+        byte[] iv1 = cipher.getIV();
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        String encryptPassword = encrypt(password, key, cipher);
+        byte[] iv2 = cipher.getIV();
+        storePreferences(value, activity, encryptUsername, encryptPassword, encode(iv1), encode(iv2));
         Crawler_Service.setData(username, password);
     }
 
-    private void storePreferences(int value, Activity activity, String encryptUsername, String encryptPassword) {
+    public String encrypt(String data, SecretKey key, Cipher cipher) throws Exception {
+        byte[] ciphertext = cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
+        return encode(ciphertext);
+    }
+
+    private void storePreferences(int value, Activity activity, String encryptUsername, String encryptPassword, String iv1, String iv2) {
         SharedPreferences.Editor editor = activity.getSharedPreferences("de.clinc8686.qishochschulcrawler", Context.MODE_PRIVATE).edit();
         editor.putString("username", encryptUsername);
         editor.putString("password", encryptPassword);
+        editor.putString("IV1", iv1);
+        editor.putString("IV2", iv2);
         editor.putInt("interval", value);
         editor.apply();
-    }
-
-    public String encrypt(String data, Key key) throws Exception {
-        byte[] dataInBytes = data.getBytes();
-        Cipher encryptionCipher = Cipher.getInstance("AES/GCM/NoPadding");
-        encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encryptedBytes = encryptionCipher.doFinal(dataInBytes);
-        return encode(encryptedBytes);
     }
 
     private String encode(byte[] data) {
@@ -108,7 +121,6 @@ public class Login {
             webClient.closeAllWindows();
             throw new TooManyFalseLoginException("gesperrt");
         }
-        Log.e("QISLogin3", username + " " + password);
         int counter = 0;
         while (counter <= 3) {
             hs_Login = searchLoginForm(hs_Login);
@@ -158,7 +170,6 @@ public class Login {
     }
 
     private HtmlPage searchLoginForm(HtmlPage hs_Login) throws Exception {
-        Log.e("QISLogin2", username + " " + password);
         if (hs_Login.getFirstByXPath("//form[contains(@name, 'login')]") != null) {
             HtmlForm hs_login_form = hs_Login.getFirstByXPath("//form[contains(@name, 'login')]");
             fillForm(hs_login_form);
@@ -196,7 +207,6 @@ public class Login {
         } else {
             throw new NoSuchFieldException("username or password not found!");
         }
-        Log.e("QIS", username + " " + password);
         hs_login_username.setValueAttribute(username);
         hs_login_password.setValueAttribute(password);
     }

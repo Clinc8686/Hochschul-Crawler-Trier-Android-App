@@ -113,7 +113,6 @@ public class GradeFragment extends Fragment {
                     if (textview.getText().toString().toLowerCase(Locale.ROOT).contains(searchString.toLowerCase(Locale.ROOT))) {
                         //view.findViewById(R.id.table).scrollTo(0, textview.getBottom()-100);
                         ((ScrollView) view.findViewById(R.id.table)).smoothScrollTo(0, textview.getBottom()-100);
-                        Log.e("QIStextview", textview.getBottom() + "");
 
                         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.BLUE, Color.TRANSPARENT);
                         colorAnimation.setDuration(500);
